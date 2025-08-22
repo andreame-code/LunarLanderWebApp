@@ -50,6 +50,41 @@ button:disabled {
   cursor: not-allowed;
 }
 
+/*
+ * Mobile control buttons: display only on devices with a coarse pointer (e.g., touch screens).
+ * These buttons provide on‑screen controls for the main and side thrusters when
+ * using the game on a phone or tablet. On desktop, the controls are hidden.
+ */
+#mobileControls {
+  display: flex;
+  justify-content: center;
+  gap: 20px;
+  margin-top: 20px;
+}
+
+#mobileControls button {
+  background-color: #238636;
+  color: #ffffff;
+  border: none;
+  width: 60px;
+  height: 60px;
+  font-size: 24px;
+  border-radius: 50%;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+#mobileControls button:active {
+  background-color: #2ea043;
+}
+
+/* Hide the mobile controls on devices with a fine pointer (such as desktop computers) */
+@media (pointer: fine) {
+  #mobileControls {
+    display: none;
+  }
+}
+
 /* Canvas for drawing the lander and thruster flames */
 #gameCanvas {
   border: 1px solid #444c56;

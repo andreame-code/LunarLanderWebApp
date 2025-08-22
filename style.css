@@ -49,3 +49,11 @@ button:disabled {
   background-color: #444c56;
   cursor: not-allowed;
 }
+
+/* Canvas for drawing the lander and thruster flames */
+#gameCanvas {
+  border: 1px solid #444c56;
+  background-color: #0a0e14;
+  display: block;
+  margin: 0 auto;
+}

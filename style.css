@@ -50,6 +50,15 @@ button:disabled {
   cursor: not-allowed;
 }
 
+/* Additional styling for the share button to distinguish it from the restart button */
+#shareButton {
+  background-color: #1f6feb;
+}
+
+#shareButton:hover {
+  background-color: #1158c7;
+}
+
 /*
  * Mobile control buttons: display only on devices with a coarse pointer (e.g., touch screens).
  * These buttons provide on‑screen controls for the main and side thrusters when

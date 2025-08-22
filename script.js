@@ -28,8 +28,8 @@ let currentGravity = 1.62;
 
 // Constants for physics
 const gravity = 1.62;           // Lunar gravity (m/s^2), acts downward
-const mainThrust = 6.0;
-const sideThrust = 3.0;
+const mainThrust = 6.0;         // Upward acceleration from main engine (m/s^2)
+const sideThrust = 3.0;         // Lateral acceleration from side thrusters (m/s^2)
 const maxAltitude = 100.0;      // Maximum altitude used for scaling (m)
 const maxRange = 100.0;         // Horizontal range corresponding to canvas width (m)
 
@@ -54,6 +54,8 @@ const fuelElem = document.getElementById('fuel');
 const messageElem = document.getElementById('message');
 const levelElem = document.getElementById('level');
 const restartButton = document.getElementById('restartButton');
+// Share button (for sharing a screenshot of the game stats)
+const shareButton = document.getElementById('shareButton');
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 
@@ -266,8 +268,11 @@ function updatePhysics() {
       message = 'Crash!';
       restartButton.textContent = 'Retry Level';
     }
-    // Reveal the restart button when game ends
+    // Reveal the restart and share buttons when the game ends
     restartButton.style.display = 'inline-block';
+    if (shareButton) {
+      shareButton.style.display = 'inline-block';
+    }
   }
 
   // Redraw the game and update text on each tick
@@ -293,6 +298,10 @@ function restartGame() {
   // Generate a new random terrain and safe zone each game
   generateTerrain();
   restartButton.style.display = 'none';
+  // Hide share button when restarting level
+  if (shareButton) {
+    shareButton.style.display = 'none';
+  }
   restartButton.textContent = 'Restart';
   updateUI();
   draw();
@@ -340,6 +349,46 @@ document.addEventListener('keyup', function (event) {
 
 // Hook up restart button
 restartButton.addEventListener('click', restartGame);
+
+//
+// Share functionality: capture the current game area as an image and share via Web Share API
+// or provide a fallback download if sharing is not supported.
+function shareStats() {
+  // Identify the game container which wraps the status, canvas and instructions
+  const gameContainer = document.getElementById('gameContainer') || document.body;
+  html2canvas(gameContainer).then(canvas => {
+    canvas.toBlob(blob => {
+      const file = new File([blob], 'lunar-lander-stats.png', { type: 'image/png' });
+      // Compose share text with current statistics
+      const shareText = `Level ${level}, Fuel left ${Math.floor(fuel)}, Vertical velocity ${verticalVelocity.toFixed(1)} m/s, Horizontal velocity ${horizontalVelocity.toFixed(1)} m/s`;
+      // Use Web Share API if available and supports files
+      if (navigator.canShare && navigator.canShare({ files: [file] })) {
+        navigator.share({
+          files: [file],
+          title: 'Lunar Lander Stats',
+          text: shareText
+        }).catch((error) => {
+          console.error('Share failed', error);
+        });
+      } else {
+        // Fallback: download the image to the user’s device
+        const url = URL.createObjectURL(blob);
+        const link = document.createElement('a');
+        link.href = url;
+        link.download = 'lunar-lander-stats.png';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        URL.revokeObjectURL(url);
+      }
+    });
+  });
+}
+
+// Register click handler for share button
+if (shareButton) {
+  shareButton.addEventListener('click', shareStats);
+}
 
 //
 // Touch and mouse handlers for mobile controls

@@ -12,6 +12,18 @@ let horizontalPosition = 50.0;  // Horizontal position (m), between 0 and maxRan
 let horizontalVelocity = 0.0;   // Horizontal velocity (m/s), positive to the right
 let fuel = 1000;                // Remaining fuel units
 
+// Gameplay progression: level counter and difficulty scaling parameters.
+// Each time the player lands successfully, the level increments.  A higher
+// level means the lander starts with less fuel and experiences stronger
+// gravitational acceleration, increasing the challenge.  These constants
+// define the base fuel, how much fuel is removed per level, and how
+// quickly gravity ramps up per level.
+let level = 1;
+const baseFuel = 1000;
+const fuelDecrease = 200;
+const gravityIncrement = 0.3;
+let currentGravity = gravity;
+
 // Constants for physics
 const gravity = 1.62;           // Lunar gravity (m/s^2), acts downward
 const mainThrust = 3.0;         // Upward acceleration from main engine (m/s^2)
@@ -38,6 +50,7 @@ const vVelElem = document.getElementById('vVelocity');
 const hVelElem = document.getElementById('hVelocity');
 const fuelElem = document.getElementById('fuel');
 const messageElem = document.getElementById('message');
+const levelElem = document.getElementById('level');
 const restartButton = document.getElementById('restartButton');
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
@@ -120,6 +133,7 @@ function updateUI() {
   hVelElem.textContent = `Horizontal Velocity: ${horizontalVelocity.toFixed(1)} m/s`;
   fuelElem.textContent = `Fuel: ${Math.floor(fuel)}`;
   messageElem.textContent = message;
+  levelElem.textContent = `Level: ${level}`;
 }
 
 // Draw the lander, ground and thruster flames on the canvas
@@ -181,7 +195,8 @@ function updatePhysics() {
   if (gameOver) return;
 
   // Determine accelerations due to thrusters and gravity
-  let accelY = gravity;
+  // The vertical acceleration starts with the current gravity for this level.
+  let accelY = currentGravity;
   let accelX = 0;
   let thrustersFiring = 0;
 
@@ -241,9 +256,13 @@ function updatePhysics() {
     const safeHorizontal = Math.abs(horizontalVelocity) <= 2.0;
     const safePosition = horizontalPosition >= safeZone.startRange && horizontalPosition <= safeZone.endRange;
     if (safeVertical && safeHorizontal && safePosition) {
+      // Successful landing: advance to the next level and update controls
       message = 'Successful landing!';
+      level += 1;
+      restartButton.textContent = 'Next Level';
     } else {
       message = 'Crash!';
+      restartButton.textContent = 'Retry Level';
     }
     // Reveal the restart button when game ends
     restartButton.style.display = 'inline-block';
@@ -256,17 +275,23 @@ function updatePhysics() {
 
 // Reset the game state to initial conditions
 function restartGame() {
+  // Reset the module's state to starting conditions for the current level.
   altitude = 100.0;
   verticalVelocity = 0.0;
   horizontalPosition = maxRange / 2;
   horizontalVelocity = 0.0;
-  fuel = 1000;
+  // Reduce starting fuel based on the level, ensuring at least 100 units remain
+  fuel = Math.max(baseFuel - fuelDecrease * (level - 1), 100);
+  // Increase gravity as the level increases
+  currentGravity = gravity + gravityIncrement * (level - 1);
+  // Clear thruster flags and reset state
   upThruster = leftThruster = rightThruster = false;
   gameOver = false;
   message = '';
-  // Generate a new terrain for each game
+  // Generate a new random terrain and safe zone each game
   generateTerrain();
   restartButton.style.display = 'none';
+  restartButton.textContent = 'Restart';
   updateUI();
   draw();
 }
@@ -377,10 +402,7 @@ if (btnRight) {
   btnRight.addEventListener('mouseup', handleRightEnd);
 }
 
-// Initial drawing and UI update
-// Generate a new terrain before starting the simulation
-generateTerrain();
-draw();
-updateUI();
+// Initialize the game by starting the first level
+restartGame();
 // Physics update timer (10 updates per second)
 setInterval(updatePhysics, 100);

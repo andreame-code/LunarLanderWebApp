@@ -12,8 +12,16 @@
 </head>
 <body>
   <h1>Lunar Lander</h1>
+
+  <!-- Main menu shown before the game starts -->
+  <div id="menu">
+    <button id="playButton">Gioca</button>
+    <button id="instructionsButton">Istruzioni</button>
+    <button id="creditsButton">Credits</button>
+  </div>
+
   <!-- The gameContainer wraps the status, canvas, controls and instructions so it can be captured as a single image -->
-  <div id="gameContainer">
+  <div id="gameContainer" style="display: none;">
   <div id="status">
     <p id="altitude">Altitude: 100.0 m</p>
     <p id="vVelocity">Vertical Velocity: 0.0 m/s</p>
@@ -47,6 +55,31 @@
     your starting fuel.
   </p>
   </div> <!-- end of gameContainer -->
+
+  <!-- Modals for instructions and credits -->
+  <div id="instructionsModal" class="modal" style="display: none;">
+    <div class="modal-content">
+      <h2>Istruzioni</h2>
+      <p>
+        Usa le frecce della tastiera per controllare il modulo: ↑ per accendere il motore principale, ← e → per i propulsori laterali.
+        Sui dispositivi mobili puoi usare i pulsanti sullo schermo. Atterra dolcemente sulla
+        <span style="color: #2a9d8f;">piattaforma verde</span>! Ogni volta che atterri con successo
+        avanzi al livello successivo, che aumenta la gravità e riduce il carburante.
+      </p>
+      <button id="closeInstructions">Chiudi</button>
+    </div>
+  </div>
+  <div id="creditsModal" class="modal" style="display: none;">
+    <div class="modal-content">
+      <h2>Credits</h2>
+      <p>
+        Questo gioco è stato creato interamente da un modello di linguaggio di grandi dimensioni,
+        nello specifico <strong>ChatGPT</strong>, per conto dell'utente Andrea. Tutto il codice e i contenuti sono stati generati
+        dall'AI, con la supervisione dell'utente.
+      </p>
+      <button id="closeCredits">Chiudi</button>
+    </div>
+  </div>
   <!-- Game logic and drawing script -->
   <script src="script.js"></script>
 </body>

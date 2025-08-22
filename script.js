@@ -42,6 +42,11 @@ let rightThruster = false;
 let gameOver = false;
 let message = '';
 
+// Flag to indicate whether the game has started.  The game logic and physics
+// updates should only run when this flag is true.  It is set to true in
+// restartGame() when the player presses "Gioca".
+let gameStarted = false;
+
 // Terrain definition
 let terrainPoints = [];
 let safeZone = { startRange: 0, endRange: 0, height: 0 };
@@ -196,7 +201,8 @@ function draw() {
 
 // Physics update executed on a fixed interval
 function updatePhysics() {
-  if (gameOver) return;
+  // Only update physics if the game is in progress and not over
+  if (!gameStarted || gameOver) return;
 
   // Determine accelerations due to thrusters and gravity
   // The vertical acceleration starts with the current gravity for this level.
@@ -295,6 +301,8 @@ function restartGame() {
   upThruster = leftThruster = rightThruster = false;
   gameOver = false;
   message = '';
+  // Mark the game as started so physics updates will run
+  gameStarted = true;
   // Generate a new random terrain and safe zone each game
   generateTerrain();
   restartButton.style.display = 'none';
@@ -349,6 +357,56 @@ document.addEventListener('keyup', function (event) {
 
 // Hook up restart button
 restartButton.addEventListener('click', restartGame);
+
+// --------- Menu logic ---------
+// References to menu and modal elements
+const menu = document.getElementById('menu');
+const playButton = document.getElementById('playButton');
+const instructionsButton = document.getElementById('instructionsButton');
+const creditsButton = document.getElementById('creditsButton');
+const instructionsModal = document.getElementById('instructionsModal');
+const creditsModal = document.getElementById('creditsModal');
+const closeInstructionsBtn = document.getElementById('closeInstructions');
+const closeCreditsBtn = document.getElementById('closeCredits');
+
+// Show game and start when "Gioca" is clicked
+if (playButton) {
+  playButton.addEventListener('click', () => {
+    // Hide menu and show the game container
+    if (menu) menu.style.display = 'none';
+    const gameContainer = document.getElementById('gameContainer');
+    if (gameContainer) gameContainer.style.display = 'block';
+    // Start the first level
+    restartGame();
+  });
+}
+
+// Show instructions modal when "Istruzioni" is clicked
+if (instructionsButton) {
+  instructionsButton.addEventListener('click', () => {
+    if (instructionsModal) instructionsModal.style.display = 'flex';
+  });
+}
+
+// Show credits modal when "Credits" is clicked
+if (creditsButton) {
+  creditsButton.addEventListener('click', () => {
+    if (creditsModal) creditsModal.style.display = 'flex';
+  });
+}
+
+// Close modals when close buttons are clicked
+if (closeInstructionsBtn) {
+  closeInstructionsBtn.addEventListener('click', () => {
+    if (instructionsModal) instructionsModal.style.display = 'none';
+  });
+}
+
+if (closeCreditsBtn) {
+  closeCreditsBtn.addEventListener('click', () => {
+    if (creditsModal) creditsModal.style.display = 'none';
+  });
+}
 
 //
 // Share functionality: capture the current game area as an image and share via Web Share API
@@ -453,7 +511,5 @@ if (btnRight) {
   btnRight.addEventListener('mouseup', handleRightEnd);
 }
 
-// Initialize the game by starting the first level
-restartGame();
 // Physics update timer (10 updates per second)
 setInterval(updatePhysics, 100);

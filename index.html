@@ -1,25 +1,29 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>Lunar Lander Web App</title>
-  <!-- Stylesheet for basic layout and styling -->
-  <link rel="stylesheet" href="style.css">
+  <!-- Include the stylesheet for layout and canvas styling -->
+  <link rel="stylesheet" href="style.css" />
 </head>
 <body>
   <h1>Lunar Lander</h1>
   <div id="status">
-    <p id="altitude">Altitude: 100.0 m</p>
-    <p id="velocity">Velocity: 0.0 m/s</p>
+    <p id="altitude">Altitude: 100.0 m</p>
+    <p id="vVelocity">Vertical Velocity: 0.0 m/s</p>
+    <p id="hVelocity">Horizontal Velocity: 0.0 m/s</p>
     <p id="fuel">Fuel: 1000</p>
-    <p id="message"></p>
+    <p id="message">
+      Use the arrow keys: ↑ fires the main engine, ← and → fire side
+      thrusters. Land softly!
+    </p>
   </div>
-  <!-- Thruster button: hold down to fire thrusters. -->
-  <button id="thrusterButton">Hold to Thrust</button>
-  <!-- Restart button shown only when the game ends -->
-  <button id="restartButton" style="display:none;">Restart</button>
-  <!-- JavaScript containing the game logic -->
+  <!-- Canvas element where the lander and thrusters are drawn -->
+  <canvas id="gameCanvas" width="360" height="480"></canvas>
+  <!-- Restart button appears when the game is over -->
+  <button id="restartButton" style="display: none">Restart</button>
+  <!-- Game logic and drawing script -->
   <script src="script.js"></script>
 </body>
 </html>

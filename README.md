@@ -24,4 +24,9 @@ Open `index.html` in any modern browser (Chrome, Firefox, Safari, Edge) to play.
 
 ## Notes
 
-This version is designed to mirror the behaviour of the watchOS game by focusing on core physics and simple controls. Feel free to extend it by adding graphics, sounds, or more sophisticated physics.
+This version is designed to mirror the behaviour of the watchOS game by focusing on core physics and simple controls. Feel free to extend it by adding graphics, 
+
+## 🤖 Generato da AI
+
+Tutto il codice e i contenuti di questo progetto sono stati **interamente realizzati** utilizzando un modello di linguaggio di grandi dimensioni (Large Language Model), nello specifico **ChatGPT** di OpenAI. Nessuna parte del progetto è stata scritta manualmente da una persona: l’intero sviluppo è stato generato e guidato da ChatGPT.
+sounds, or more sophisticated physics.

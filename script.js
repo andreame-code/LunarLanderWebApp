@@ -28,8 +28,8 @@ let currentGravity = 1.62;
 
 // Constants for physics
 const gravity = 1.62;           // Lunar gravity (m/s^2), acts downward
-const mainThrust = 3.0;         // Upward acceleration from main engine (m/s^2)
-const sideThrust = 1.5;         // Lateral acceleration from side thrusters (m/s^2)
+const mainThrust = 6.0;
+const sideThrust = 3.0;
 const maxAltitude = 100.0;      // Maximum altitude used for scaling (m)
 const maxRange = 100.0;         // Horizontal range corresponding to canvas width (m)
 

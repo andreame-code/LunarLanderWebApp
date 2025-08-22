@@ -22,7 +22,9 @@ let level = 1;
 const baseFuel = 1000;
 const fuelDecrease = 200;
 const gravityIncrement = 0.3;
-let currentGravity = gravity;
+// The current effective gravity used during simulation. It is initialized
+// to the base lunar gravity and adjusted in restartGame() based on the level.
+let currentGravity = 1.62;
 
 // Constants for physics
 const gravity = 1.62;           // Lunar gravity (m/s^2), acts downward

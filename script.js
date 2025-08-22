@@ -42,6 +42,11 @@ const restartButton = document.getElementById('restartButton');
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 
+// Mobile control button references (may be null on desktop)
+const btnUp = document.getElementById('btnUp');
+const btnLeft = document.getElementById('btnLeft');
+const btnRight = document.getElementById('btnRight');
+
 /*
  * Generate a random lunar surface profile and select a flat landing zone.
  * The surface is defined by a series of normalized heights (0–1) sampled
@@ -308,6 +313,69 @@ document.addEventListener('keyup', function (event) {
 
 // Hook up restart button
 restartButton.addEventListener('click', restartGame);
+
+//
+// Touch and mouse handlers for mobile controls
+// These functions set and clear thruster flags when the on‑screen buttons
+// are pressed on touch devices or clicked with the mouse. We call
+// preventDefault() to avoid triggering the default click behavior on mobile.
+function handleUpStart(e) {
+  e.preventDefault();
+  if (!gameOver && fuel > 0) {
+    upThruster = true;
+  }
+}
+
+function handleUpEnd(e) {
+  e.preventDefault();
+  upThruster = false;
+}
+
+function handleLeftStart(e) {
+  e.preventDefault();
+  if (!gameOver && fuel > 0) {
+    leftThruster = true;
+  }
+}
+
+function handleLeftEnd(e) {
+  e.preventDefault();
+  leftThruster = false;
+}
+
+function handleRightStart(e) {
+  e.preventDefault();
+  if (!gameOver && fuel > 0) {
+    rightThruster = true;
+  }
+}
+
+function handleRightEnd(e) {
+  e.preventDefault();
+  rightThruster = false;
+}
+
+// Register touch and mouse events on the on‑screen controls if they exist
+if (btnUp) {
+  btnUp.addEventListener('touchstart', handleUpStart);
+  btnUp.addEventListener('touchend', handleUpEnd);
+  btnUp.addEventListener('mousedown', handleUpStart);
+  btnUp.addEventListener('mouseup', handleUpEnd);
+}
+
+if (btnLeft) {
+  btnLeft.addEventListener('touchstart', handleLeftStart);
+  btnLeft.addEventListener('touchend', handleLeftEnd);
+  btnLeft.addEventListener('mousedown', handleLeftStart);
+  btnLeft.addEventListener('mouseup', handleLeftEnd);
+}
+
+if (btnRight) {
+  btnRight.addEventListener('touchstart', handleRightStart);
+  btnRight.addEventListener('touchend', handleRightEnd);
+  btnRight.addEventListener('mousedown', handleRightStart);
+  btnRight.addEventListener('mouseup', handleRightEnd);
+}
 
 // Initial drawing and UI update
 // Generate a new terrain before starting the simulation

@@ -32,6 +32,8 @@ const mainThrust = 6.0;         // Upward acceleration from main engine (m/s^2)
 const sideThrust = 3.0;         // Lateral acceleration from side thrusters (m/s^2)
 const maxAltitude = 100.0;      // Maximum altitude used for scaling (m)
 const maxRange = 100.0;         // Horizontal range corresponding to canvas width (m)
+const landerWidth = 20;         // Width of the lander in pixels
+const landerHeight = 30;        // Height of the lander in pixels
 
 // Thruster state flags
 let upThruster = false;
@@ -162,8 +164,6 @@ function draw() {
   const yPix = canvas.height - (altitude / maxAltitude) * canvas.height;
 
   // Dimensions of the lunar module (in pixels)
-  const landerWidth = 20;
-  const landerHeight = 30;
 
   // Draw the lunar module body
   ctx.fillStyle = '#dcdcdc';
@@ -259,8 +259,6 @@ function updatePhysics() {
   const xPix = (horizontalPosition / maxRange) * canvas.width;
   const yPix = canvas.height - (altitude / maxAltitude) * canvas.height;
   const terrainY = getTerrainYPixel(xPix);
-  // landerHeight defined in draw(), replicate value here
-  const landerHeight = 30;
   if (yPix >= terrainY) {
     // Touching terrain: set altitude to zero and end game
     altitude = 0;

@@ -101,8 +101,14 @@ function getTerrainYPixel(xPix) {
   if (terrainPoints.length === 0) return canvas.height;
   const numSegments = terrainPoints.length - 1;
   const segmentWidth = canvas.width / numSegments;
-  const i = Math.floor(xPix / segmentWidth);
-  const t = (xPix % segmentWidth) / segmentWidth;
+  // Clamp xPix to the canvas bounds so we don't read past the last segment
+  const clampedX = Math.min(Math.max(xPix, 0), canvas.width);
+  let i = Math.floor(clampedX / segmentWidth);
+  let t = (clampedX % segmentWidth) / segmentWidth;
+  if (i >= numSegments) {
+    i = numSegments - 1;
+    t = 1;
+  }
   const h0 = terrainPoints[i];
   const h1 = terrainPoints[i + 1];
   const heightNorm = h0 * (1 - t) + h1 * t;
@@ -513,3 +519,14 @@ if (btnRight) {
 
 // Physics update timer (10 updates per second)
 setInterval(updatePhysics, 100);
+
+// Export functions for testing in Node environments
+if (typeof module !== 'undefined') {
+  module.exports = {
+    getTerrainYPixel,
+    setTerrainPoints: (points) => {
+      terrainPoints = points;
+    },
+    canvas,
+  };
+}

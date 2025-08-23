@@ -1,0 +1,13 @@
+{
+  "name": "lunarlanderwebapp",
+  "version": "1.0.0",
+  "description": "This repository contains a simple web version of the **Lunar Lander** game. It simulates the lunar module descent phase of the Apollo missions. The objective is to land the module safely on the Moon’s surface by controlling a single thruster.",
+  "main": "script.js",
+  "scripts": {
+    "test": "node --test"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs"
+}

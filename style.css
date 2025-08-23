@@ -117,6 +117,9 @@ button:disabled {
   justify-content: center;
   gap: 20px;
   margin-top: 20px;
+  /* Prevent mobile browsers from selecting control text */
+  user-select: none;
+  -webkit-user-select: none;
 }
 
 #mobileControls button {
@@ -130,6 +133,11 @@ button:disabled {
   cursor: pointer;
   transition: background-color 0.3s ease, box-shadow 0.3s ease;
   box-shadow: 0 0 5px #ff00a0, 0 0 10px #ff00a0;
+  /* Ensure arrows inside buttons aren't selectable */
+  user-select: none;
+  -webkit-user-select: none;
+  -ms-user-select: none;
+  -webkit-touch-callout: none;
 }
 
 #mobileControls button:active {

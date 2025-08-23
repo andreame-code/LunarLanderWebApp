@@ -98,14 +98,14 @@ function generateTerrain() {
   };
 }
 
-// Compute the terrain pixel Y coordinate at a given pixel X using linear interpolation.
+// Compute the terrain pixel Y coordinate at a given pixel X using linear
+// interpolation. The segment index is clamped so that an X value at the far
+// right edge uses the last terrain segment instead of reading past the array.
 function getTerrainYPixel(xPix) {
   if (terrainPoints.length === 0) return canvas.height;
   const numSegments = terrainPoints.length - 1;
   const segmentWidth = canvas.width / numSegments;
-  // Clamp index to the last valid segment to avoid out‑of‑bounds access
-  const i = Math.min(Math.floor(xPix / segmentWidth), numSegments - 1);
-  // Compute interpolation factor within that segment
+  const i = Math.min(Math.floor(xPix / segmentWidth), numSegments - 1); // clamp index
   const t = (xPix - i * segmentWidth) / segmentWidth;
   const h0 = terrainPoints[i];
   const h1 = terrainPoints[i + 1];

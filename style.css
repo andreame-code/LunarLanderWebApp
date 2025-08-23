@@ -35,21 +35,30 @@ h1 {
 
 #status {
   position: absolute;
-  top: 10px;
-  left: 50%;
-  transform: translateX(-50%);
+  top: 5px;
+  left: 5px;
   display: flex;
-  gap: 10px;
-  padding: 4px 8px;
-  background-color: rgba(10, 10, 35, 0.7);
-  border-radius: 4px;
+  flex-wrap: wrap;
+  gap: 4px;
   z-index: 2;
-  font-size: 12px;
 }
 
 #status p {
   margin: 0;
-  font-size: 12px;
+  padding: 2px 4px;
+  font-size: 10px;
+  background-color: rgba(10, 10, 35, 0.7);
+  border-radius: 4px;
+}
+
+#message {
+  position: absolute;
+  top: 40px;
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: 2;
+  margin: 0;
+  font-size: 14px;
 }
 
 button {

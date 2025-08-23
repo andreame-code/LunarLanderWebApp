@@ -259,12 +259,12 @@ class Game {
 
   // Update textual status on the page
   updateUI() {
-    this.altitudeElem.textContent = `Altitude: ${this.lander.altitude.toFixed(1)} m`;
-    this.vVelElem.textContent = `Vertical Velocity: ${this.lander.verticalVelocity.toFixed(1)} m/s`;
-    this.hVelElem.textContent = `Horizontal Velocity: ${this.lander.horizontalVelocity.toFixed(1)} m/s`;
-    this.fuelElem.textContent = `Fuel: ${Math.floor(this.lander.fuel)}`;
+    this.altitudeElem.textContent = `ALT ${this.lander.altitude.toFixed(1)}m`;
+    this.vVelElem.textContent = `VV ${this.lander.verticalVelocity.toFixed(1)}m/s`;
+    this.hVelElem.textContent = `HV ${this.lander.horizontalVelocity.toFixed(1)}m/s`;
+    this.fuelElem.textContent = `FUEL ${Math.floor(this.lander.fuel)}`;
+    this.levelElem.textContent = `LVL ${this.level}`;
     this.messageElem.textContent = this.message;
-    this.levelElem.textContent = `Level: ${this.level}`;
   }
 
   // Draw the lander, ground and thruster flames on the canvas

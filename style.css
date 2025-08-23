@@ -16,6 +16,14 @@ body {
   min-height: 100vh;
 }
 
+.hidden {
+  display: none !important;
+}
+
+.landing-pad {
+  color: #2a9d8f;
+}
+
 h1 {
   margin-top: 0;
   margin-bottom: 20px;
@@ -91,8 +99,8 @@ button:disabled {
   background-color: #ff00a0;
   color: #ffffff;
   border: 2px solid #ff00a0;
-  width: 60px;
-  height: 60px;
+  width: clamp(40px, 15vw, 60px);
+  height: clamp(40px, 15vw, 60px);
   font-size: 24px;
   border-radius: 50%;
   cursor: pointer;
@@ -120,6 +128,9 @@ button:disabled {
   display: block;
   margin: 0 auto;
   box-shadow: 0 0 10px #00f5ff, 0 0 20px #00f5ff;
+  width: 90vw;
+  max-width: 360px;
+  height: auto;
 }
 
 /* Position the game container relative so that absolute-positioned children
@@ -129,8 +140,7 @@ button:disabled {
 }
 
 /* Container for end-of-game buttons (restart, share).  Positioned at the
-   centre of the game area with a vertical stack.  Initially hidden and
-   displayed via inline style when the game ends. */
+   centre of the game area with a vertical stack.  Hidden via CSS class until the game ends. */
 #endButtons {
   position: absolute;
   top: 50%;

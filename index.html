@@ -23,8 +23,11 @@
     <button id="creditsButton" aria-label="Show credits">Credits</button>
   </div>
 
-  <!-- The gameContainer wraps the status, canvas, controls and instructions so it can be captured as a single image -->
+  <!-- The gameContainer wraps the canvas, status, controls and instructions so it can be captured as a single image -->
   <div id="gameContainer" class="hidden" role="main">
+  <!-- Canvas element where the lander and thrusters are drawn -->
+  <canvas id="gameCanvas" width="360" height="480" aria-label="Game canvas"></canvas>
+  <!-- Status readout overlaid on the game area -->
   <div id="status">
     <p id="altitude">Altitude: 100.0 m</p>
     <p id="vVelocity">Vertical Velocity: 0.0 m/s</p>
@@ -34,11 +37,7 @@
     <p id="level">Level: 1</p>
     <!-- Message displayed at end of game -->
     <p id="message"></p>
-    <!-- Static instructions for controls and landing -->
-    <!-- Note: instructions are displayed below the game canvas on desktop and mobile -->
   </div>
-  <!-- Canvas element where the lander and thrusters are drawn -->
-  <canvas id="gameCanvas" width="360" height="480" aria-label="Game canvas"></canvas>
   <!-- Buttons displayed after the game ends: restart and share.  They are wrapped in
        a container so they can be centrally positioned over the game area.  The
        container is hidden by default and shown when the game ends. -->

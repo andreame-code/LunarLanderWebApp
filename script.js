@@ -101,8 +101,10 @@ function getTerrainYPixel(xPix) {
   if (terrainPoints.length === 0) return canvas.height;
   const numSegments = terrainPoints.length - 1;
   const segmentWidth = canvas.width / numSegments;
-  const i = Math.floor(xPix / segmentWidth);
-  const t = (xPix % segmentWidth) / segmentWidth;
+  // Clamp index to the last valid segment to avoid out-of-bounds access
+  const i = Math.min(Math.floor(xPix / segmentWidth), numSegments - 1);
+  // Compute interpolation factor within that segment
+  const t = (xPix - i * segmentWidth) / segmentWidth;
   const h0 = terrainPoints[i];
   const h1 = terrainPoints[i + 1];
   const heightNorm = h0 * (1 - t) + h1 * t;

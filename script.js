@@ -61,6 +61,8 @@ const levelElem = document.getElementById('level');
 const restartButton = document.getElementById('restartButton');
 // Share button (for sharing a screenshot of the game stats)
 const shareButton = document.getElementById('shareButton');
+// Container for end-of-game buttons (restart and share)
+const endButtons = document.getElementById('endButtons');
 const canvas = document.getElementById('gameCanvas');
 const ctx = canvas.getContext('2d');
 
@@ -101,7 +103,7 @@ function getTerrainYPixel(xPix) {
   if (terrainPoints.length === 0) return canvas.height;
   const numSegments = terrainPoints.length - 1;
   const segmentWidth = canvas.width / numSegments;
-  // Clamp index to the last valid segment to avoid out-of-bounds access
+  // Clamp index to the last valid segment to avoid out‑of‑bounds access
   const i = Math.min(Math.floor(xPix / segmentWidth), numSegments - 1);
   // Compute interpolation factor within that segment
   const t = (xPix - i * segmentWidth) / segmentWidth;
@@ -276,10 +278,13 @@ function updatePhysics() {
       message = 'Crash!';
       restartButton.textContent = 'Retry Level';
     }
-    // Reveal the restart and share buttons when the game ends
+    // Reveal the restart and share buttons when the game ends and show the container
     restartButton.style.display = 'inline-block';
     if (shareButton) {
       shareButton.style.display = 'inline-block';
+    }
+    if (endButtons) {
+      endButtons.style.display = 'flex';
     }
   }
 
@@ -308,9 +313,12 @@ function restartGame() {
   // Generate a new random terrain and safe zone each game
   generateTerrain();
   restartButton.style.display = 'none';
-  // Hide share button when restarting level
+  // Hide share button when restarting level and hide the end buttons container
   if (shareButton) {
     shareButton.style.display = 'none';
+  }
+  if (endButtons) {
+    endButtons.style.display = 'none';
   }
   restartButton.textContent = 'Restart';
   updateUI();

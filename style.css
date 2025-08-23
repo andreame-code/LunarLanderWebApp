@@ -122,6 +122,27 @@ button:disabled {
   box-shadow: 0 0 10px #00f5ff, 0 0 20px #00f5ff;
 }
 
+/* Position the game container relative so that absolute-positioned children
+   like the endButtons container are positioned relative to it */
+#gameContainer {
+  position: relative;
+}
+
+/* Container for end-of-game buttons (restart, share).  Positioned at the
+   centre of the game area with a vertical stack.  Initially hidden and
+   displayed via inline style when the game ends. */
+#endButtons {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 20px;
+  z-index: 5;
+}
+
 /* Styling for the main menu */
 #menu {
   display: flex;

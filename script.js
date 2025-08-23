@@ -153,6 +153,7 @@ class Game {
     this.gameOver = false;
     this.message = '';
     this.gameStarted = false;
+    this.crashed = false;
 
     // Terrain definition
     this.terrainPoints = [];
@@ -278,14 +279,32 @@ class Game {
       const xPix = (this.lander.horizontalPosition / CONFIG.maxRange) * this.canvas.width;
       const yPix = this.canvas.height - (this.lander.altitude / CONFIG.maxAltitude) * this.canvas.height;
 
-    // Draw the lunar module body
+    // Draw the lunar module body or a crumpled wreck if crashed
     this.ctx.fillStyle = '#dcdcdc';
+    if (this.crashed) {
+      const collapsedHeight = CONFIG.landerHeight / 3;
+      this.ctx.beginPath();
+      this.ctx.moveTo(xPix - CONFIG.landerWidth / 2, yPix);
+      this.ctx.lineTo(xPix + CONFIG.landerWidth / 2, yPix);
+      this.ctx.lineTo(xPix, yPix - collapsedHeight);
+      this.ctx.closePath();
+      this.ctx.fill();
+      // Cross lines to suggest a crumpled wreck
+      this.ctx.strokeStyle = '#888';
+      this.ctx.beginPath();
+      this.ctx.moveTo(xPix - CONFIG.landerWidth / 2, yPix);
+      this.ctx.lineTo(xPix + CONFIG.landerWidth / 2, yPix - collapsedHeight / 2);
+      this.ctx.moveTo(xPix + CONFIG.landerWidth / 2, yPix);
+      this.ctx.lineTo(xPix - CONFIG.landerWidth / 2, yPix - collapsedHeight / 2);
+      this.ctx.stroke();
+    } else {
       this.ctx.fillRect(
         xPix - CONFIG.landerWidth / 2,
         yPix - CONFIG.landerHeight,
         CONFIG.landerWidth,
         CONFIG.landerHeight
       );
+    }
 
     // Main thruster flame (drawn below the lander) when firing
     if (this.lander.upThruster && this.lander.fuel > 0 && !this.gameOver) {
@@ -353,9 +372,11 @@ class Game {
         this.message = 'Successful landing!';
         this.level += 1;
         this.restartButton.textContent = 'Next Level';
+        this.crashed = false;
       } else {
         this.message = 'Crash!';
         this.restartButton.textContent = 'Retry Level';
+        this.crashed = true;
       }
       // Reveal the restart and share buttons when the game ends and show the container
       this.restartButton.classList.remove('hidden');
@@ -384,6 +405,7 @@ class Game {
     // Clear thruster flags and reset state
     this.gameOver = false;
     this.message = '';
+    this.crashed = false;
     // Mark the game as started so physics updates will run
     this.gameStarted = true;
     // Generate a new random terrain and safe zone each game

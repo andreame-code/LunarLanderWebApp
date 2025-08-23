@@ -5,14 +5,51 @@
 //   - ArrowLeft and ArrowRight fire side thrusters, accelerating left/right.
 // Land gently on the surface with low vertical and horizontal speeds.
 
-// Constants for physics
-const gravity = 1.62;           // Lunar gravity (m/s^2), acts downward
-const mainThrust = 6.0;         // Upward acceleration from main engine (m/s^2)
-const sideThrust = 3.0;         // Lateral acceleration from side thrusters (m/s^2)
-const maxAltitude = 100.0;      // Maximum altitude used for scaling (m)
-const maxRange = 100.0;         // Horizontal range corresponding to canvas width (m)
-const landerWidth = 20;         // Width of the lander in pixels
-const landerHeight = 30;        // Height of the lander in pixels
+// Configuration constants
+const CONFIG = {
+  gravity: 1.62,           // Lunar gravity (m/s^2)
+  mainThrust: 6.0,         // Upward acceleration from main engine (m/s^2)
+  sideThrust: 3.0,         // Lateral acceleration from side thrusters (m/s^2)
+  maxAltitude: 100.0,      // Maximum altitude used for scaling (m)
+  maxRange: 100.0,         // Horizontal range corresponding to canvas width (m)
+  landerWidth: 20,         // Lander width in pixels
+  landerHeight: 30,        // Lander height in pixels
+  baseFuel: 1000,
+  fuelDecrease: 200,
+  gravityIncrement: 0.3
+};
+
+// Simple audio helpers
+const audioContext = new (window.AudioContext || window.webkitAudioContext)();
+let thrusterOscillator = null;
+
+function startThrusterSound() {
+  if (thrusterOscillator) return;
+  thrusterOscillator = audioContext.createOscillator();
+  const gain = audioContext.createGain();
+  gain.gain.value = 0.1;
+  thrusterOscillator.type = 'sawtooth';
+  thrusterOscillator.frequency.value = 200;
+  thrusterOscillator.connect(gain).connect(audioContext.destination);
+  thrusterOscillator.start();
+}
+
+function stopThrusterSound() {
+  if (!thrusterOscillator) return;
+  thrusterOscillator.stop();
+  thrusterOscillator.disconnect();
+  thrusterOscillator = null;
+}
+
+function playLandingSound(success) {
+  const osc = audioContext.createOscillator();
+  const gain = audioContext.createGain();
+  gain.gain.value = 0.2;
+  osc.frequency.value = success ? 440 : 110;
+  osc.connect(gain).connect(audioContext.destination);
+  osc.start();
+  osc.stop(audioContext.currentTime + 0.2);
+}
 
 /**
  * Lander encapsulates the state and physics of the lunar module.  It
@@ -27,7 +64,7 @@ class Lander {
 
   // Reset the lander to its initial position with a given starting fuel
   reset(startFuel) {
-    this.altitude = 100.0;
+    this.altitude = CONFIG.maxAltitude;
     this.verticalVelocity = 0.0;
     this.horizontalPosition = this.maxRange / 2;
     this.horizontalVelocity = 0.0;
@@ -108,12 +145,9 @@ class Lander {
  */
 class Game {
   constructor() {
-    // Gameplay progression: level counter and difficulty scaling parameters.
+    // Gameplay progression
     this.level = 1;
-    this.baseFuel = 1000;
-    this.fuelDecrease = 200;
-    this.gravityIncrement = 0.3;
-    this.currentGravity = gravity;
+    this.currentGravity = CONFIG.gravity;
 
     // Game state
     this.gameOver = false;
@@ -143,30 +177,10 @@ class Game {
     this.btnRight = document.getElementById('btnRight');
 
     // Lander instance
-    this.lander = new Lander(maxRange);
+    this.lander = new Lander(CONFIG.maxRange);
 
     // Bind restart button
     this.restartButton.addEventListener('click', () => this.restartGame());
-
-    // Register touch and mouse events on the on-screen controls if they exist
-    if (this.btnUp) {
-      this.btnUp.addEventListener('touchstart', handleUpStart);
-      this.btnUp.addEventListener('touchend', handleUpEnd);
-      this.btnUp.addEventListener('mousedown', handleUpStart);
-      this.btnUp.addEventListener('mouseup', handleUpEnd);
-    }
-    if (this.btnLeft) {
-      this.btnLeft.addEventListener('touchstart', handleLeftStart);
-      this.btnLeft.addEventListener('touchend', handleLeftEnd);
-      this.btnLeft.addEventListener('mousedown', handleLeftStart);
-      this.btnLeft.addEventListener('mouseup', handleLeftEnd);
-    }
-    if (this.btnRight) {
-      this.btnRight.addEventListener('touchstart', handleRightStart);
-      this.btnRight.addEventListener('touchend', handleRightEnd);
-      this.btnRight.addEventListener('mousedown', handleRightStart);
-      this.btnRight.addEventListener('mouseup', handleRightEnd);
-    }
 
     this.updateUI();
     this.draw();
@@ -188,7 +202,7 @@ class Game {
     }
     // choose a random flat zone of width one segment somewhere in the middle
     const safeIndex = Math.floor(Math.random() * (numPoints - 2)) + 1;
-    const segmentRange = maxRange / numPoints;
+    const segmentRange = CONFIG.maxRange / numPoints;
     const flatHeight = Math.min(
       this.terrainPoints[safeIndex],
       this.terrainPoints[safeIndex + 1],
@@ -235,8 +249,8 @@ class Game {
     this.ctx.fill();
     this.ctx.stroke();
     // Highlight safe landing pad
-    const padStartPix = (this.safeZone.startRange / maxRange) * this.canvas.width;
-    const padEndPix = (this.safeZone.endRange / maxRange) * this.canvas.width;
+      const padStartPix = (this.safeZone.startRange / CONFIG.maxRange) * this.canvas.width;
+      const padEndPix = (this.safeZone.endRange / CONFIG.maxRange) * this.canvas.width;
     const padYPix = this.canvas.height - this.safeZone.height * this.canvas.height;
     this.ctx.fillStyle = '#2a9d8f';
     this.ctx.fillRect(padStartPix, padYPix - 2, padEndPix - padStartPix, 4);
@@ -261,12 +275,17 @@ class Game {
     this.drawTerrain();
 
     // Convert physical coordinates to pixel positions
-    const xPix = (this.lander.horizontalPosition / maxRange) * this.canvas.width;
-    const yPix = this.canvas.height - (this.lander.altitude / maxAltitude) * this.canvas.height;
+      const xPix = (this.lander.horizontalPosition / CONFIG.maxRange) * this.canvas.width;
+      const yPix = this.canvas.height - (this.lander.altitude / CONFIG.maxAltitude) * this.canvas.height;
 
     // Draw the lunar module body
     this.ctx.fillStyle = '#dcdcdc';
-    this.ctx.fillRect(xPix - landerWidth / 2, yPix - landerHeight, landerWidth, landerHeight);
+      this.ctx.fillRect(
+        xPix - CONFIG.landerWidth / 2,
+        yPix - CONFIG.landerHeight,
+        CONFIG.landerWidth,
+        CONFIG.landerHeight
+      );
 
     // Main thruster flame (drawn below the lander) when firing
     if (this.lander.upThruster && this.lander.fuel > 0 && !this.gameOver) {
@@ -280,39 +299,44 @@ class Game {
     }
 
     // Left thruster flame (drawn on the right side of the module) when firing
-    if (this.lander.leftThruster && this.lander.fuel > 0 && !this.gameOver) {
-      this.ctx.fillStyle = '#ff9e00';
-      this.ctx.beginPath();
-      this.ctx.moveTo(xPix + landerWidth / 2, yPix - landerHeight + 5);
-      this.ctx.lineTo(xPix + landerWidth / 2 + 15, yPix - landerHeight + 15);
-      this.ctx.lineTo(xPix + landerWidth / 2, yPix - landerHeight + 25);
-      this.ctx.closePath();
-      this.ctx.fill();
-    }
+      if (this.lander.leftThruster && this.lander.fuel > 0 && !this.gameOver) {
+        this.ctx.fillStyle = '#ff9e00';
+        this.ctx.beginPath();
+        this.ctx.moveTo(xPix + CONFIG.landerWidth / 2, yPix - CONFIG.landerHeight + 5);
+        this.ctx.lineTo(
+          xPix + CONFIG.landerWidth / 2 + 15,
+          yPix - CONFIG.landerHeight + 15
+        );
+        this.ctx.lineTo(xPix + CONFIG.landerWidth / 2, yPix - CONFIG.landerHeight + 25);
+        this.ctx.closePath();
+        this.ctx.fill();
+      }
 
     // Right thruster flame (drawn on the left side of the module) when firing
-    if (this.lander.rightThruster && this.lander.fuel > 0 && !this.gameOver) {
-      this.ctx.fillStyle = '#ff9e00';
-      this.ctx.beginPath();
-      this.ctx.moveTo(xPix - landerWidth / 2, yPix - landerHeight + 5);
-      this.ctx.lineTo(xPix - landerWidth / 2 - 15, yPix - landerHeight + 15);
-      this.ctx.lineTo(xPix - landerWidth / 2, yPix - landerHeight + 25);
-      this.ctx.closePath();
-      this.ctx.fill();
-    }
+      if (this.lander.rightThruster && this.lander.fuel > 0 && !this.gameOver) {
+        this.ctx.fillStyle = '#ff9e00';
+        this.ctx.beginPath();
+        this.ctx.moveTo(xPix - CONFIG.landerWidth / 2, yPix - CONFIG.landerHeight + 5);
+        this.ctx.lineTo(
+          xPix - CONFIG.landerWidth / 2 - 15,
+          yPix - CONFIG.landerHeight + 15
+        );
+        this.ctx.lineTo(xPix - CONFIG.landerWidth / 2, yPix - CONFIG.landerHeight + 25);
+        this.ctx.closePath();
+        this.ctx.fill();
+      }
   }
 
   // Physics update executed on a fixed interval
-  updatePhysics() {
+  updatePhysics(dt) {
     // Only update physics if the game is in progress and not over
     if (!this.gameStarted || this.gameOver) return;
 
-    const dt = 0.1;
-    this.lander.update(dt, this.currentGravity, mainThrust, sideThrust);
+    this.lander.update(dt, this.currentGravity, CONFIG.mainThrust, CONFIG.sideThrust);
 
     // Convert positions to pixels for terrain collision detection
-    const xPix = (this.lander.horizontalPosition / maxRange) * this.canvas.width;
-    const yPix = this.canvas.height - (this.lander.altitude / maxAltitude) * this.canvas.height;
+      const xPix = (this.lander.horizontalPosition / CONFIG.maxRange) * this.canvas.width;
+      const yPix = this.canvas.height - (this.lander.altitude / CONFIG.maxAltitude) * this.canvas.height;
     const terrainY = this.getTerrainYPixel(xPix);
     if (yPix >= terrainY) {
       // Touching terrain: set altitude to zero and end game
@@ -334,13 +358,15 @@ class Game {
         this.restartButton.textContent = 'Retry Level';
       }
       // Reveal the restart and share buttons when the game ends and show the container
-      this.restartButton.style.display = 'inline-block';
+      this.restartButton.classList.remove('hidden');
       if (this.shareButton) {
-        this.shareButton.style.display = 'inline-block';
+        this.shareButton.classList.remove('hidden');
       }
       if (this.endButtons) {
-        this.endButtons.style.display = 'flex';
+        this.endButtons.classList.remove('hidden');
       }
+      stopThrusterSound();
+      playLandingSound(safeVertical && safeHorizontal && safePosition);
     }
 
     // Redraw the game and update text on each tick
@@ -351,10 +377,10 @@ class Game {
   // Reset the game state to initial conditions
   restartGame() {
     // Reset the module's state to starting conditions for the current level.
-    const startFuel = Math.max(this.baseFuel - this.fuelDecrease * (this.level - 1), 100);
+    const startFuel = Math.max(CONFIG.baseFuel - CONFIG.fuelDecrease * (this.level - 1), 100);
     this.lander.reset(startFuel);
     // Increase gravity as the level increases
-    this.currentGravity = gravity + this.gravityIncrement * (this.level - 1);
+    this.currentGravity = CONFIG.gravity + CONFIG.gravityIncrement * (this.level - 1);
     // Clear thruster flags and reset state
     this.gameOver = false;
     this.message = '';
@@ -362,13 +388,13 @@ class Game {
     this.gameStarted = true;
     // Generate a new random terrain and safe zone each game
     this.generateTerrain();
-    this.restartButton.style.display = 'none';
+    this.restartButton.classList.add('hidden');
     // Hide share button when restarting level and hide the end buttons container
     if (this.shareButton) {
-      this.shareButton.style.display = 'none';
+      this.shareButton.classList.add('hidden');
     }
     if (this.endButtons) {
-      this.endButtons.style.display = 'none';
+      this.endButtons.classList.add('hidden');
     }
     this.restartButton.textContent = 'Restart';
     this.updateUI();
@@ -419,89 +445,65 @@ if (game.shareButton) {
   game.shareButton.addEventListener('click', shareStats);
 }
 
-//
-// Touch and mouse handlers for mobile controls
-// These functions set and clear thruster flags when the on‑screen buttons
-// are pressed on touch devices or clicked with the mouse. We call
-// preventDefault() to avoid triggering the default click behavior on mobile.
-function handleUpStart(e) {
-  e.preventDefault();
-  if (!game.gameOver) {
-    game.lander.startUp();
-  }
-}
+// --------- Control handling ---------
+const thrusterButtons = [
+  { id: 'btnUp', start: 'startUp', stop: 'stopUp' },
+  { id: 'btnLeft', start: 'startLeft', stop: 'stopLeft' },
+  { id: 'btnRight', start: 'startRight', stop: 'stopRight' }
+];
 
-function handleUpEnd(e) {
-  e.preventDefault();
-  game.lander.stopUp();
-}
+thrusterButtons.forEach(({ id, start, stop }) => {
+  const btn = document.getElementById(id);
+  if (!btn) return;
+  const startHandler = e => {
+    e.preventDefault();
+    if (!game.gameOver) {
+      audioContext.resume();
+      game.lander[start]();
+      startThrusterSound();
+    }
+  };
+  const stopHandler = e => {
+    e.preventDefault();
+    game.lander[stop]();
+    if (!game.lander.upThruster && !game.lander.leftThruster && !game.lander.rightThruster) {
+      stopThrusterSound();
+    }
+  };
+  btn.addEventListener('pointerdown', startHandler);
+  btn.addEventListener('pointerup', stopHandler);
+  btn.addEventListener('pointerout', stopHandler);
+  btn.addEventListener('pointercancel', stopHandler);
+});
 
-function handleLeftStart(e) {
-  e.preventDefault();
-  if (!game.gameOver) {
-    game.lander.startLeft();
-  }
-}
+const KEY_MAP = {
+  ArrowUp: { start: 'startUp', stop: 'stopUp' },
+  ArrowLeft: { start: 'startLeft', stop: 'stopLeft' },
+  ArrowRight: { start: 'startRight', stop: 'stopRight' }
+};
 
-function handleLeftEnd(e) {
-  e.preventDefault();
-  game.lander.stopLeft();
-}
-
-function handleRightStart(e) {
-  e.preventDefault();
-  if (!game.gameOver) {
-    game.lander.startRight();
-  }
-}
-
-function handleRightEnd(e) {
-  e.preventDefault();
-  game.lander.stopRight();
-}
-
-// Keyboard event handlers to toggle thrusters
-document.addEventListener('keydown', function (event) {
-  if (game.gameOver) return;
-  switch (event.code) {
-    case 'ArrowUp':
-      game.lander.startUp();
-      event.preventDefault();
-      break;
-    case 'ArrowLeft':
-      game.lander.startLeft();
-      event.preventDefault();
-      break;
-    case 'ArrowRight':
-      game.lander.startRight();
-      event.preventDefault();
-      break;
-    default:
-      break;
+document.addEventListener('keydown', e => {
+  const action = KEY_MAP[e.code];
+  if (action && !game.gameOver) {
+    audioContext.resume();
+    game.lander[action.start]();
+    startThrusterSound();
+    e.preventDefault();
   }
 });
 
-document.addEventListener('keyup', function (event) {
-  switch (event.code) {
-    case 'ArrowUp':
-      game.lander.stopUp();
-      event.preventDefault();
-      break;
-    case 'ArrowLeft':
-      game.lander.stopLeft();
-      event.preventDefault();
-      break;
-    case 'ArrowRight':
-      game.lander.stopRight();
-      event.preventDefault();
-      break;
-    default:
-      break;
+document.addEventListener('keyup', e => {
+  const action = KEY_MAP[e.code];
+  if (action) {
+    game.lander[action.stop]();
+    if (!game.lander.upThruster && !game.lander.leftThruster && !game.lander.rightThruster) {
+      stopThrusterSound();
+    }
+    e.preventDefault();
   }
 });
 
-// --------- Menu logic ---------
-// References to menu and modal elements
+// --------- Menu and modal logic ---------
 const menu = document.getElementById('menu');
 const playButton = document.getElementById('playButton');
 const instructionsButton = document.getElementById('instructionsButton');
@@ -511,45 +513,67 @@ const creditsModal = document.getElementById('creditsModal');
 const closeInstructionsBtn = document.getElementById('closeInstructions');
 const closeCreditsBtn = document.getElementById('closeCredits');
 
-// Show game and start when "Gioca" is clicked
 if (playButton) {
   playButton.addEventListener('click', () => {
-    // Hide menu and show the game container
-    if (menu) menu.style.display = 'none';
+    if (menu) menu.classList.add('hidden');
     const gameContainer = document.getElementById('gameContainer');
-    if (gameContainer) gameContainer.style.display = 'block';
-    // Start the first level
+    if (gameContainer) gameContainer.classList.remove('hidden');
     game.restartGame();
   });
 }
 
-// Show instructions modal when "Istruzioni" is clicked
-if (instructionsButton) {
-  instructionsButton.addEventListener('click', () => {
-    if (instructionsModal) instructionsModal.style.display = 'flex';
-  });
+[
+  { button: instructionsButton, modal: instructionsModal },
+  { button: creditsButton, modal: creditsModal }
+].forEach(({ button, modal }) => {
+  if (button && modal) {
+    button.addEventListener('click', () => modal.classList.remove('hidden'));
+  }
+});
+
+[
+  { button: closeInstructionsBtn, modal: instructionsModal },
+  { button: closeCreditsBtn, modal: creditsModal }
+].forEach(({ button, modal }) => {
+  if (button && modal) {
+    button.addEventListener('click', () => modal.classList.add('hidden'));
+  }
+});
+
+// --------- Game loop ---------
+let lastTime = 0;
+let paused = false;
+
+function gameLoop(timestamp) {
+  if (!lastTime) lastTime = timestamp;
+  const dt = Math.min((timestamp - lastTime) / 1000, 0.1);
+  lastTime = timestamp;
+  if (!paused) {
+    game.updatePhysics(dt);
+  }
+  requestAnimationFrame(gameLoop);
 }
 
-// Show credits modal when "Credits" is clicked
-if (creditsButton) {
-  creditsButton.addEventListener('click', () => {
-    if (creditsModal) creditsModal.style.display = 'flex';
-  });
+requestAnimationFrame(gameLoop);
+
+document.addEventListener('visibilitychange', () => {
+  paused = document.hidden;
+  if (paused) {
+    game.lander.stopUp();
+    game.lander.stopLeft();
+    game.lander.stopRight();
+    stopThrusterSound();
+  }
+});
+
+function resizeCanvas() {
+  const maxWidth = 360;
+  const maxHeight = 480;
+  const scale = Math.min(window.innerWidth / maxWidth, window.innerHeight / maxHeight, 1);
+  game.canvas.style.width = `${maxWidth * scale}px`;
+  game.canvas.style.height = `${maxHeight * scale}px`;
 }
 
-// Close modals when close buttons are clicked
-if (closeInstructionsBtn) {
-  closeInstructionsBtn.addEventListener('click', () => {
-    if (instructionsModal) instructionsModal.style.display = 'none';
-  });
-}
-
-if (closeCreditsBtn) {
-  closeCreditsBtn.addEventListener('click', () => {
-    if (creditsModal) creditsModal.style.display = 'none';
-  });
-}
-
-// Physics update timer (10 updates per second)
-setInterval(() => game.updatePhysics(), 100);
+window.addEventListener('resize', resizeCanvas);
+resizeCanvas();
 

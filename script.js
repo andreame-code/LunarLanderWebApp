@@ -358,12 +358,19 @@ class Game {
       const yPix = this.canvas.height - (this.lander.altitude / CONFIG.maxAltitude) * this.canvas.height;
     const terrainY = this.getTerrainYPixel(xPix);
     if (yPix >= terrainY) {
-      // Touching terrain: set altitude to zero and end game
-      this.lander.altitude = 0;
+      // Capture impact velocities before stopping the lander
+      const impactVertical = this.lander.verticalVelocity;
+      const impactHorizontal = this.lander.horizontalVelocity;
+      // Touching terrain: snap the lander to the surface and end the game
+      const surfaceAltitude =
+        ((this.canvas.height - terrainY) / this.canvas.height) * CONFIG.maxAltitude;
+      this.lander.altitude = surfaceAltitude;
+      this.lander.verticalVelocity = 0;
+      this.lander.horizontalVelocity = 0;
       this.gameOver = true;
       // Determine if landing is successful: low speeds and within safe landing pad
-      const safeVertical = Math.abs(this.lander.verticalVelocity) <= 2.0;
-      const safeHorizontal = Math.abs(this.lander.horizontalVelocity) <= 2.0;
+      const safeVertical = Math.abs(impactVertical) <= 2.0;
+      const safeHorizontal = Math.abs(impactHorizontal) <= 2.0;
       const safePosition =
         this.lander.horizontalPosition >= this.safeZone.startRange &&
         this.lander.horizontalPosition <= this.safeZone.endRange;

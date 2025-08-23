@@ -574,6 +574,17 @@ function resizeCanvas() {
   game.canvas.style.height = `${maxHeight * scale}px`;
 }
 
-window.addEventListener('resize', resizeCanvas);
+let resizeRaf = null;
+function handleResize() {
+  if (resizeRaf !== null) {
+    cancelAnimationFrame(resizeRaf);
+  }
+  resizeRaf = requestAnimationFrame(() => {
+    resizeRaf = null;
+    resizeCanvas();
+  });
+}
+
+window.addEventListener('resize', handleResize);
 resizeCanvas();
 

@@ -27,17 +27,16 @@
   <div id="gameContainer" class="hidden" role="main">
   <!-- Canvas element where the lander and thrusters are drawn -->
   <canvas id="gameCanvas" width="360" height="480" aria-label="Game canvas"></canvas>
-  <!-- Status readout overlaid on the game area -->
-  <div id="status">
-    <p id="altitude">Altitude: 100.0 m</p>
-    <p id="vVelocity">Vertical Velocity: 0.0 m/s</p>
-    <p id="hVelocity">Horizontal Velocity: 0.0 m/s</p>
-    <p id="fuel">Fuel: 1000</p>
-    <!-- Current level is displayed here and updated by the script -->
-    <p id="level">Level: 1</p>
+    <!-- Compact status indicators overlaid on the game area -->
+    <div id="status">
+      <p id="altitude">ALT 100m</p>
+      <p id="vVelocity">VV 0m/s</p>
+      <p id="hVelocity">HV 0m/s</p>
+      <p id="fuel">FUEL 1000</p>
+      <p id="level">LVL 1</p>
+    </div>
     <!-- Message displayed at end of game -->
     <p id="message"></p>
-  </div>
   <!-- Buttons displayed after the game ends: restart and share.  They are wrapped in
        a container so they can be centrally positioned over the game area.  The
        container is hidden by default and shown when the game ends. -->

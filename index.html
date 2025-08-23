@@ -17,14 +17,14 @@
   <h1>Lunar Lander</h1>
 
   <!-- Main menu shown before the game starts -->
-  <div id="menu">
-    <button id="playButton">Gioca</button>
-    <button id="instructionsButton">Istruzioni</button>
-    <button id="creditsButton">Credits</button>
+  <div id="menu" role="menu">
+    <button id="playButton" aria-label="Play game">Gioca</button>
+    <button id="instructionsButton" aria-label="Show instructions">Istruzioni</button>
+    <button id="creditsButton" aria-label="Show credits">Credits</button>
   </div>
 
   <!-- The gameContainer wraps the status, canvas, controls and instructions so it can be captured as a single image -->
-  <div id="gameContainer" style="display: none;">
+  <div id="gameContainer" class="hidden" role="main">
   <div id="status">
     <p id="altitude">Altitude: 100.0 m</p>
     <p id="vVelocity">Vertical Velocity: 0.0 m/s</p>
@@ -38,53 +38,53 @@
     <!-- Note: instructions are displayed below the game canvas on desktop and mobile -->
   </div>
   <!-- Canvas element where the lander and thrusters are drawn -->
-  <canvas id="gameCanvas" width="360" height="480"></canvas>
+  <canvas id="gameCanvas" width="360" height="480" aria-label="Game canvas"></canvas>
   <!-- Buttons displayed after the game ends: restart and share.  They are wrapped in
        a container so they can be centrally positioned over the game area.  The
        container is hidden by default and shown when the game ends. -->
-  <div id="endButtons" style="display: none;">
-    <button id="restartButton" style="display: none">Restart</button>
-    <button id="shareButton" style="display: none">Share Stats</button>
+  <div id="endButtons" class="hidden">
+    <button id="restartButton" class="hidden" aria-label="Restart level">Restart</button>
+    <button id="shareButton" class="hidden" aria-label="Share statistics">Share Stats</button>
   </div>
 
   <!-- Mobile controls: visible on touch devices -->
   <div id="mobileControls">
-    <button id="btnUp">↑</button>
-    <button id="btnLeft">←</button>
-    <button id="btnRight">→</button>
+    <button id="btnUp" aria-label="Main thruster">↑</button>
+    <button id="btnLeft" aria-label="Left thruster">←</button>
+    <button id="btnRight" aria-label="Right thruster">→</button>
   </div>
   <!-- Instructions displayed below the game -->
   <p id="instructions">
     Use the arrow keys (↑ for the main engine, ← and → for the side thrusters)
     or the on‑screen buttons above on mobile devices. Land softly on the
-    <span style="color: #2a9d8f;">green landing pad</span>! Each time you land
+    <span class="landing-pad">green landing pad</span>! Each time you land
     successfully you advance to the next level, which increases gravity and reduces
     your starting fuel.
   </p>
   </div> <!-- end of gameContainer -->
 
   <!-- Modals for instructions and credits -->
-  <div id="instructionsModal" class="modal" style="display: none;">
+  <div id="instructionsModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="instructionsTitle">
     <div class="modal-content">
-      <h2>Istruzioni</h2>
+      <h2 id="instructionsTitle">Istruzioni</h2>
       <p>
         Usa le frecce della tastiera per controllare il modulo: ↑ per accendere il motore principale, ← e → per i propulsori laterali.
         Sui dispositivi mobili puoi usare i pulsanti sullo schermo. Atterra dolcemente sulla
-        <span style="color: #2a9d8f;">piattaforma verde</span>! Ogni volta che atterri con successo
+        <span class="landing-pad">piattaforma verde</span>! Ogni volta che atterri con successo
         avanzi al livello successivo, che aumenta la gravità e riduce il carburante.
       </p>
-      <button id="closeInstructions">Chiudi</button>
+      <button id="closeInstructions" aria-label="Close instructions">Chiudi</button>
     </div>
   </div>
-  <div id="creditsModal" class="modal" style="display: none;">
+  <div id="creditsModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="creditsTitle">
     <div class="modal-content">
-      <h2>Credits</h2>
+      <h2 id="creditsTitle">Credits</h2>
       <p>
         Questo gioco è stato creato interamente da un modello di linguaggio di grandi dimensioni,
         nello specifico <strong>ChatGPT</strong>, per conto dell'utente Andrea. Tutto il codice e i contenuti sono stati generati
         dall'AI, con la supervisione dell'utente.
       </p>
-      <button id="closeCredits">Chiudi</button>
+      <button id="closeCredits" aria-label="Close credits">Chiudi</button>
     </div>
   </div>
   <!-- Game logic and drawing script -->

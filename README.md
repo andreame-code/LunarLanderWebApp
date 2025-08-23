@@ -6,7 +6,7 @@ This repository contains a simple web version of the **Lunar Lander** game. It 
 
 - The lunar module starts at an altitude of **100 m** with zero initial vertical velocity.
 - Every **0.1 s** the simulation updates velocity and altitude by applying the Moon’s gravitational acceleration. When the thruster is on, an additional upward acceleration is applied and fuel is consumed.
-- You control the thruster by pressing and holding the **“Hold to Thrust”** button. The thruster fires as long as you hold the button and fuel remains. When fuel runs out, the thruster shuts off automatically.
+- You control the thrusters with the arrow keys or the on-screen mobile buttons: press **↑** for the main engine and **←/→** for the side thrusters. Each thruster fires as long as you hold the key or button and fuel remains; when fuel runs out, the thrusters shut off automatically.
 - The game ends when the altitude reaches zero. If the module’s speed is **≤ 2 m/s** upon touchdown, you land successfully; otherwise, the lander crashes.
 - After landing or crashing, a **Restart** button appears to start a new attempt.
 

@@ -151,6 +151,22 @@ button:disabled {
   box-shadow: 0 0 10px #ff33b5, 0 0 20px #ff33b5;
 }
 
+/* Instructions displayed below the game */
+#instructions {
+  margin-top: 20px;
+  text-align: center;
+}
+
+/* Prevent mobile devices from selecting the instructions text */
+@media (pointer: coarse) {
+  #instructions {
+    user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+    -webkit-touch-callout: none;
+  }
+}
+
 /* Hide the mobile controls on devices with a fine pointer (such as desktop computers) */
 @media (pointer: fine) {
   #mobileControls {

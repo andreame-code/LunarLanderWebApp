@@ -198,6 +198,14 @@ class Game {
     this.ctx.fillRect(padStartPix, padYPix - 2, padEndPix - padStartPix, 4);
   }
 
+  // Convert physical coordinates to pixel positions
+  toPixelCoords(horizontalPosition, altitude) {
+    const x = (horizontalPosition / CONFIG.maxRange) * this.canvas.width;
+    const y =
+      this.canvas.height - (altitude / CONFIG.maxAltitude) * this.canvas.height;
+    return { x, y };
+  }
+
   // Update textual status on the page
   updateUI() {
     this.altitudeElem.textContent = `ALT ${this.lander.altitude.toFixed(1)}m`;
@@ -217,8 +225,10 @@ class Game {
     this.drawTerrain();
 
     // Convert physical coordinates to pixel positions
-      const xPix = (this.lander.horizontalPosition / CONFIG.maxRange) * this.canvas.width;
-      const yPix = this.canvas.height - (this.lander.altitude / CONFIG.maxAltitude) * this.canvas.height;
+    const { x: xPix, y: yPix } = this.toPixelCoords(
+      this.lander.horizontalPosition,
+      this.lander.altitude
+    );
 
     // Draw the lunar module body or a crumpled wreck if crashed
     this.ctx.fillStyle = '#dcdcdc';
@@ -318,8 +328,10 @@ class Game {
     this.lander.update(dt, this.currentGravity, this.mainThrust, this.sideThrust);
 
     // Convert positions to pixels for terrain collision detection
-      const xPix = (this.lander.horizontalPosition / CONFIG.maxRange) * this.canvas.width;
-      const yPix = this.canvas.height - (this.lander.altitude / CONFIG.maxAltitude) * this.canvas.height;
+    const { x: xPix, y: yPix } = this.toPixelCoords(
+      this.lander.horizontalPosition,
+      this.lander.altitude
+    );
     const terrainY = this.getTerrainYPixel(xPix);
     if (yPix >= terrainY) {
       // Capture impact velocities before stopping the lander

@@ -2,7 +2,7 @@
   "name": "lunarlanderwebapp",
   "version": "1.0.0",
   "description": "This repository contains a simple web version of the Lunar Lander game.",
-  "main": "script.js",
+  "main": "src/game.js",
   "scripts": {
     "test": "node --test"
   },

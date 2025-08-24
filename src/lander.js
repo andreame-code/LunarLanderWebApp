@@ -23,6 +23,7 @@ class Lander {
     this.fullMass = this.dryMass;
     this.mass = this.dryMass;
     this.reset(0);
+    this.anomaly = false;
   }
 
   reset(startFuel) {
@@ -36,6 +37,7 @@ class Lander {
     this.upThruster = false;
     this.leftThruster = false;
     this.rightThruster = false;
+    this.anomaly = false;
   }
 
   startUp() {
@@ -100,6 +102,20 @@ class Lander {
     } else if (this.horizontalPosition > this.maxRange) {
       this.horizontalPosition = this.maxRange;
       this.horizontalVelocity = 0;
+    }
+
+    if (
+      !isFinite(this.altitude) ||
+      this.altitude < 0 ||
+      this.altitude > LANDER_CONFIG.maxAltitude ||
+      !isFinite(this.verticalVelocity) ||
+      Math.abs(this.verticalVelocity) > 1000
+    ) {
+      this.anomaly = true;
+      this.altitude = Math.min(Math.max(this.altitude, 0), LANDER_CONFIG.maxAltitude);
+      if (!isFinite(this.verticalVelocity) || Math.abs(this.verticalVelocity) > 1000) {
+        this.verticalVelocity = 0;
+      }
     }
   }
 }

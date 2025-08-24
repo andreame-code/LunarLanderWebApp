@@ -4,10 +4,18 @@
   "description": "This repository contains a simple web version of the Lunar Lander game.",
   "main": "src/game.js",
   "scripts": {
-    "test": "node --test"
+    "test": "node --test",
+    "start": "node server.js",
+    "build": "terser src/*.js -m -c -o dist/app.min.js"
   },
   "keywords": [],
   "author": "",
   "license": "ISC",
-  "type": "commonjs"
+  "type": "commonjs",
+  "dependencies": {
+    "express": "^4.18.2"
+  },
+  "devDependencies": {
+    "terser": "^5.21.0"
+  }
 }

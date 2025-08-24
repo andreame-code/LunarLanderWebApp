@@ -23,9 +23,9 @@ const CONFIG = {
 // and are also shown in the selection menu to highlight strengths and
 // weaknesses.
 const LANDER_TYPES = {
-  classic: { baseFuel: 1000, mainThrust: 6.0, sideThrust: 3.0 },
-  round: { baseFuel: 1200, mainThrust: 5.5, sideThrust: 2.5 },
-  triangle: { baseFuel: 800, mainThrust: 7.0, sideThrust: 4.0 }
+  classic: { baseFuel: 1000, mainThrust: 6.0, sideThrust: 3.0, dryMass: 1000 },
+  round: { baseFuel: 1200, mainThrust: 5.5, sideThrust: 2.5, dryMass: 1100 },
+  triangle: { baseFuel: 800, mainThrust: 7.0, sideThrust: 4.0, dryMass: 900 }
 };
 
 // Simple audio helpers
@@ -105,7 +105,8 @@ class Game {
     this.mainThrust = this.landerStats.mainThrust;
     this.sideThrust = this.landerStats.sideThrust;
     this.baseFuel = this.landerStats.baseFuel;
-    this.lander = new Lander(CONFIG.maxRange, this.landerType);
+    this.dryMass = this.landerStats.dryMass;
+    this.lander = new Lander(CONFIG.maxRange, this.landerType, this.dryMass);
 
     // Bind restart button
     this.restartButton.addEventListener('click', () => this.restartGame());
@@ -123,7 +124,8 @@ class Game {
     this.mainThrust = this.landerStats.mainThrust;
     this.sideThrust = this.landerStats.sideThrust;
     this.baseFuel = this.landerStats.baseFuel;
-    this.lander = new Lander(CONFIG.maxRange, type);
+    this.dryMass = this.landerStats.dryMass;
+    this.lander = new Lander(CONFIG.maxRange, type, this.dryMass);
   }
 
   /*

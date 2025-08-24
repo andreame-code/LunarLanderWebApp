@@ -1,6 +1,6 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
-const { Lander, CONFIG } = require('../src/lander');
+const { Lander, LANDER_CONFIG } = require('../src/lander');
 
 test('fuel decreases when thrusters fire', () => {
   const lander = new Lander(100);
@@ -24,7 +24,7 @@ test('position updates according to velocity', () => {
   lander.verticalVelocity = 10;
   lander.horizontalVelocity = 5;
   lander.update(1, 0, 0, 0);
-  assert.ok(Math.abs(lander.altitude - (CONFIG.maxAltitude - 10)) < 1e-6);
+  assert.ok(Math.abs(lander.altitude - (LANDER_CONFIG.maxAltitude - 10)) < 1e-6);
   assert.ok(Math.abs(lander.horizontalPosition - (50 + 5)) < 1e-6);
 });
 

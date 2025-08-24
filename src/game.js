@@ -416,36 +416,41 @@ window.game = game;
 //
 // Share functionality: capture the current game area as an image and share via Web Share API
 // or provide a fallback download if sharing is not supported.
-function shareStats() {
+async function shareStats() {
   // Identify the game container which wraps the status, canvas and instructions
   const gameContainer = document.getElementById('gameContainer') || document.body;
-  html2canvas(gameContainer).then(canvas => {
-    canvas.toBlob(blob => {
-      const file = new File([blob], 'lunar-lander-stats.png', { type: 'image/png' });
-      // Compose share text with current statistics
-      const shareText = `Level ${game.level}, Fuel left ${Math.floor(game.lander.fuel)}, Vertical velocity ${game.lander.verticalVelocity.toFixed(1)} m/s, Horizontal velocity ${game.lander.horizontalVelocity.toFixed(1)} m/s`;
-      // Use Web Share API if available and supports files
-      if (navigator.canShare && navigator.canShare({ files: [file] })) {
-        navigator.share({
-          files: [file],
-          title: 'Lunar Lander Stats',
-          text: shareText
-        }).catch((error) => {
-          console.error('Share failed', error);
-        });
-      } else {
-        // Fallback: download the image to the user’s device
-        const url = URL.createObjectURL(blob);
-        const link = document.createElement('a');
-        link.href = url;
-        link.download = 'lunar-lander-stats.png';
-        document.body.appendChild(link);
-        link.click();
-        document.body.removeChild(link);
-        URL.revokeObjectURL(url);
-      }
+
+  try {
+    const canvas = await html2canvas(gameContainer);
+    const blob = await new Promise((resolve, reject) => {
+      canvas.toBlob(b => (b ? resolve(b) : reject(new Error('Canvas rendering failed'))), 'image/png');
     });
-  });
+
+    const file = new File([blob], 'lunar-lander-stats.png', { type: 'image/png' });
+    // Compose share text with current statistics
+    const shareText = `Level ${game.level}, Fuel left ${Math.floor(game.lander.fuel)}, Vertical velocity ${game.lander.verticalVelocity.toFixed(1)} m/s, Horizontal velocity ${game.lander.horizontalVelocity.toFixed(1)} m/s`;
+
+    // Use Web Share API if available and supports files
+    if (navigator.canShare && navigator.canShare({ files: [file] })) {
+      await navigator.share({
+        files: [file],
+        title: 'Lunar Lander Stats',
+        text: shareText
+      });
+    } else {
+      // Fallback: download the image to the user’s device
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement('a');
+      link.href = url;
+      link.download = 'lunar-lander-stats.png';
+      document.body.appendChild(link);
+      link.click();
+      document.body.removeChild(link);
+      URL.revokeObjectURL(url);
+    }
+  } catch (error) {
+    console.error('Share failed', error);
+  }
 }
 
 // Register click handler for share button

@@ -38,8 +38,7 @@ test('mass decreases as fuel burns', () => {
   lander.reset(10);
   const initialMass = lander.mass;
   lander.startUp();
-  // Burn fuel without advancing time to isolate mass change
-  lander.update(0, 0, 1, 0);
+  lander.update(1, 0, 1, 0);
   assert.strictEqual(lander.mass, initialMass - 1);
 });
 
@@ -52,10 +51,8 @@ test('thrust is more effective with lower mass', () => {
 
   const light = new Lander(100);
   light.reset(1000);
-  for (let i = 0; i < 999; i++) {
-    light.startUp();
-    light.update(0, 0, 1, 0);
-  }
+  light.fuel = 1;
+  light.mass = light.dryMass + light.fuel;
   light.startUp();
   light.update(1, 0, 1, 0);
   const lightVel = light.verticalVelocity;

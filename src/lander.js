@@ -79,7 +79,9 @@ class Lander {
     }
 
     if (thrusters > 0 && this.fuel > 0) {
-      this.fuel = Math.max(this.fuel - thrusters, 0);
+      // Consume fuel in proportion to active thrusters and elapsed time
+      const fuelUsed = thrusters * dt;
+      this.fuel = Math.max(this.fuel - fuelUsed, 0);
       this.mass = this.dryMass + this.fuel;
       if (this.fuel <= 0) {
         this.upThruster = this.leftThruster = this.rightThruster = false;

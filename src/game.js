@@ -72,7 +72,7 @@ class Game {
 
     // Game state
     this.gameOver = false;
-    this.message = '';
+    this.messageKey = null;
     this.gameStarted = false;
     this.crashed = false;
 
@@ -205,7 +205,7 @@ class Game {
     this.hVelElem.textContent = `HV ${this.lander.horizontalVelocity.toFixed(1)}m/s`;
     this.fuelElem.textContent = `FUEL ${Math.floor(this.lander.fuel)}`;
     this.levelElem.textContent = `LVL ${this.level}`;
-    this.messageElem.textContent = this.message;
+    this.messageElem.textContent = this.messageKey ? translations[currentLang][this.messageKey] : '';
   }
 
   // Draw the lander, ground and thruster flames on the canvas
@@ -340,15 +340,16 @@ class Game {
         this.lander.horizontalPosition <= this.safeZone.endRange;
       if (safeVertical && safeHorizontal && safePosition) {
         // Successful landing: advance to the next level and update controls
-        this.message = 'Successful landing!';
+        this.messageKey = 'success_message';
         this.level += 1;
-        this.restartButton.textContent = 'Next Level';
+        this.restartButton.setAttribute('data-i18n', 'next_level');
         this.crashed = false;
       } else {
-        this.message = 'Crash!';
-        this.restartButton.textContent = 'Retry Level';
+        this.messageKey = 'crash_message';
+        this.restartButton.setAttribute('data-i18n', 'retry_level');
         this.crashed = true;
       }
+      setLanguage(currentLang);
       // Reveal the restart and share buttons when the game ends and show the container
       this.restartButton.classList.remove('hidden');
       if (this.shareButton) {
@@ -375,7 +376,7 @@ class Game {
     this.currentGravity = CONFIG.gravity + CONFIG.gravityIncrement * (this.level - 1);
     // Clear thruster flags and reset state
     this.gameOver = false;
-    this.message = '';
+    this.messageKey = null;
     this.crashed = false;
     // Mark the game as started so physics updates will run
     this.gameStarted = true;
@@ -389,7 +390,8 @@ class Game {
     if (this.endButtons) {
       this.endButtons.classList.add('hidden');
     }
-    this.restartButton.textContent = 'Restart';
+    this.restartButton.setAttribute('data-i18n', 'restart');
+    setLanguage(currentLang);
     this.updateUI();
     this.draw();
   }
@@ -397,6 +399,7 @@ class Game {
 
 // Instantiate the game controller
 const game = new Game();
+window.game = game;
 
 //
 // Share functionality: capture the current game area as an image and share via Web Share API

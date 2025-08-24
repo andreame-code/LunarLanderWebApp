@@ -5,12 +5,22 @@ const LANDER_CONFIG = {
   maxAltitude: 100.0
 };
 
+// Approximate dry mass of the lander (arbitrary units). The total mass
+// is this dry mass plus remaining fuel. As fuel burns, the mass decreases
+// which makes the thrusters more effective.
+const DRY_MASS = 1000;
+
 class Lander {
   constructor(maxRange, type = 'classic') {
     this.maxRange = maxRange;
     // Store the visual/physical variant of the lander.  For now the type only
     // affects rendering but in the future it will influence physics as well.
     this.type = type;
+    // Mass properties. `fullMass` will hold the mass when fuel is full so we
+    // can scale thrust effectiveness based on current mass.
+    this.dryMass = DRY_MASS;
+    this.fullMass = this.dryMass;
+    this.mass = this.dryMass;
     this.reset(0);
   }
 
@@ -20,6 +30,8 @@ class Lander {
     this.horizontalPosition = this.maxRange / 2;
     this.horizontalVelocity = 0.0;
     this.fuel = startFuel;
+    this.mass = this.dryMass + this.fuel;
+    this.fullMass = this.mass;
     this.upThruster = false;
     this.leftThruster = false;
     this.rightThruster = false;
@@ -49,21 +61,25 @@ class Lander {
     let accelX = 0;
     let thrusters = 0;
 
+    // Scale thrust based on current mass relative to the fully fueled mass.
+    const massRatio = this.fullMass / this.mass;
+
     if (this.upThruster && this.fuel > 0) {
-      accelY -= mainThrust;
+      accelY -= mainThrust * massRatio;
       thrusters++;
     }
     if (this.leftThruster && this.fuel > 0) {
-      accelX -= sideThrust;
+      accelX -= sideThrust * massRatio;
       thrusters++;
     }
     if (this.rightThruster && this.fuel > 0) {
-      accelX += sideThrust;
+      accelX += sideThrust * massRatio;
       thrusters++;
     }
 
     if (thrusters > 0 && this.fuel > 0) {
       this.fuel = Math.max(this.fuel - thrusters, 0);
+      this.mass = this.dryMass + this.fuel;
       if (this.fuel <= 0) {
         this.upThruster = this.leftThruster = this.rightThruster = false;
       }

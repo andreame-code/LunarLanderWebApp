@@ -1,4 +1,7 @@
-const CONFIG = {
+// Configuration specific to the lander model.  Naming this object uniquely
+// avoids clashing with other global constants when the script is included in
+// a browser environment alongside additional scripts such as game logic.
+const LANDER_CONFIG = {
   maxAltitude: 100.0
 };
 
@@ -12,7 +15,7 @@ class Lander {
   }
 
   reset(startFuel) {
-    this.altitude = CONFIG.maxAltitude;
+    this.altitude = LANDER_CONFIG.maxAltitude;
     this.verticalVelocity = 0.0;
     this.horizontalPosition = this.maxRange / 2;
     this.horizontalVelocity = 0.0;
@@ -84,8 +87,10 @@ class Lander {
 
 // Export for Node and attach to window for browser usage
 if (typeof module !== 'undefined' && module.exports) {
-  module.exports = { Lander, CONFIG };
+  // Export the configuration with a descriptive name to avoid collisions when
+  // required from Node-based tests.
+  module.exports = { Lander, LANDER_CONFIG };
 } else {
   window.Lander = Lander;
-  window.LANDER_CONFIG = CONFIG;
+  window.LANDER_CONFIG = LANDER_CONFIG;
 }

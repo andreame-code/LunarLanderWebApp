@@ -29,8 +29,13 @@ h1 {
   margin-bottom: 20px;
   /* Bright magenta for the game title */
   color: #ff00a0;
-  /* Add a glowing neon effect */
-  text-shadow: 0 0 5px #ff00a0, 0 0 10px #ff00a0, 0 0 15px #ff00a0;
+  /* Add a crisp outline with a subtle glow */
+  text-shadow:
+    -1px -1px 0 #000,
+     1px -1px 0 #000,
+    -1px  1px 0 #000,
+     1px  1px 0 #000,
+     0 0 4px #ff00a0;
 }
 
 #status {

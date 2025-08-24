@@ -89,14 +89,24 @@ class Game {
     this.btnLeft = document.getElementById('btnLeft');
     this.btnRight = document.getElementById('btnRight');
 
-    // Lander instance
-    this.lander = new Lander(CONFIG.maxRange);
+    // Lander instance. The specific lander type can be chosen from the menu
+    // before the game starts. Default to the classic rectangular lander.
+    this.landerType = 'classic';
+    this.lander = new Lander(CONFIG.maxRange, this.landerType);
 
     // Bind restart button
     this.restartButton.addEventListener('click', () => this.restartGame());
 
     this.updateUI();
     this.draw();
+  }
+
+  // Change the currently active lander type and create a new instance. This
+  // is used when the player selects a lander from the menu before starting
+  // the game.
+  setLanderType(type) {
+    this.landerType = type;
+    this.lander = new Lander(CONFIG.maxRange, type);
   }
 
   /*
@@ -210,12 +220,35 @@ class Game {
       this.ctx.lineTo(xPix - CONFIG.landerWidth / 2, yPix - collapsedHeight / 2);
       this.ctx.stroke();
     } else {
-      this.ctx.fillRect(
-        xPix - CONFIG.landerWidth / 2,
-        yPix - CONFIG.landerHeight,
-        CONFIG.landerWidth,
-        CONFIG.landerHeight
-      );
+      // Draw different lander shapes based on the selected type
+      switch (this.lander.type) {
+        case 'round':
+          this.ctx.beginPath();
+          this.ctx.arc(
+            xPix,
+            yPix - CONFIG.landerHeight / 2,
+            CONFIG.landerHeight / 2,
+            0,
+            Math.PI * 2
+          );
+          this.ctx.fill();
+          break;
+        case 'triangle':
+          this.ctx.beginPath();
+          this.ctx.moveTo(xPix, yPix - CONFIG.landerHeight);
+          this.ctx.lineTo(xPix + CONFIG.landerWidth / 2, yPix);
+          this.ctx.lineTo(xPix - CONFIG.landerWidth / 2, yPix);
+          this.ctx.closePath();
+          this.ctx.fill();
+          break;
+        default:
+          this.ctx.fillRect(
+            xPix - CONFIG.landerWidth / 2,
+            yPix - CONFIG.landerHeight,
+            CONFIG.landerWidth,
+            CONFIG.landerHeight
+          );
+      }
     }
 
     // Main thruster flame (drawn below the lander) when firing
@@ -453,15 +486,27 @@ const instructionsModal = document.getElementById('instructionsModal');
 const creditsModal = document.getElementById('creditsModal');
 const closeInstructionsBtn = document.getElementById('closeInstructions');
 const closeCreditsBtn = document.getElementById('closeCredits');
+const landerSelection = document.getElementById('landerSelection');
+const landerButtons = document.querySelectorAll('.landerChoice');
 
 if (playButton) {
   playButton.addEventListener('click', () => {
     if (menu) menu.classList.add('hidden');
+    if (landerSelection) landerSelection.classList.remove('hidden');
+  });
+}
+
+// Handle player choice of lander type after clicking play
+landerButtons.forEach(btn => {
+  btn.addEventListener('click', () => {
+    const type = btn.getAttribute('data-type');
+    game.setLanderType(type);
+    if (landerSelection) landerSelection.classList.add('hidden');
     const gameContainer = document.getElementById('gameContainer');
     if (gameContainer) gameContainer.classList.remove('hidden');
     game.restartGame();
   });
-}
+});
 
 [
   { button: instructionsButton, modal: instructionsModal },

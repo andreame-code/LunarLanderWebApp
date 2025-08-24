@@ -234,6 +234,29 @@ button:disabled {
   box-shadow: 0 0 10px #ff33b5, 0 0 20px #ff33b5;
 }
 
+/* Lander selection screen */
+#landerSelection {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+  margin-top: 40px;
+}
+
+#landerOptions {
+  display: flex;
+  gap: 20px;
+}
+
+#landerOptions button {
+  width: 60px;
+  height: 60px;
+  padding: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
 /* Modal overlay styling */
 .modal {
   position: fixed;

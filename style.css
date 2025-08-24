@@ -234,6 +234,32 @@ button:disabled {
   box-shadow: 0 0 10px #ff33b5, 0 0 20px #ff33b5;
 }
 
+#languageMenu {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+}
+
+#languageSelect {
+  background-color: #ff00a0;
+  color: #ffffff;
+  border: 2px solid #ff00a0;
+  padding: 14px 28px;
+  margin: 5px;
+  font-size: 20px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0 0 5px #ff00a0, 0 0 10px #ff00a0;
+}
+
+#languageSelect:hover {
+  background-color: #ff33b5;
+  border-color: #ff33b5;
+  box-shadow: 0 0 10px #ff33b5, 0 0 20px #ff33b5;
+}
+
 /* Lander selection screen */
 #landerSelection {
   display: flex;

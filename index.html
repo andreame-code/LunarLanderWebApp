@@ -17,63 +17,71 @@
   <h1>Lunar Lander</h1>
 
   <!-- Main menu shown before the game starts -->
-  <div id="menu" role="menu">
-    <button id="playButton" aria-label="Play game">Gioca</button>
-    <button id="instructionsButton" aria-label="Show instructions">Istruzioni</button>
-    <button id="creditsButton" aria-label="Show credits">Credits</button>
-  </div>
+    <div id="menu" role="menu">
+      <div id="languageMenu">
+        <label for="languageSelect" data-i18n="language">Language</label>
+        <select id="languageSelect" aria-label="Select language">
+          <option value="en">English</option>
+          <option value="it">Italiano</option>
+          <option value="de">Deutsch</option>
+        </select>
+      </div>
+      <button id="playButton" aria-label="Play game" data-i18n="play" data-i18n-aria-label="play">Play</button>
+      <button id="instructionsButton" aria-label="Show instructions" data-i18n="instructions" data-i18n-aria-label="instructions">Instructions</button>
+      <button id="creditsButton" aria-label="Show credits" data-i18n="credits" data-i18n-aria-label="credits">Credits</button>
+    </div>
 
   <!-- Lander selection shown after clicking play -->
-  <div id="landerSelection" class="hidden" role="menu">
-    <p>Seleziona il tuo lander</p>
-    <div id="landerOptions">
-      <div class="landerOption">
-        <button class="landerChoice" data-type="classic" aria-label="Lander classico">
-          <svg width="40" height="40">
-            <rect x="10" y="5" width="20" height="30" fill="#dcdcdc" />
-          </svg>
-        </button>
-        <p class="landerInfo">
-          Carburante: 1000<br />
-          Massa: 1000<br />
-          Spinta principale: 6<br />
-          Spinta laterale: 3<br />
-          Qualità: Equilibrato e affidabile<br />
-          Difetti: Nessun punto di forza
-        </p>
-      </div>
-      <div class="landerOption">
-        <button class="landerChoice" data-type="round" aria-label="Lander rotondo">
-          <svg width="40" height="40">
-            <circle cx="20" cy="20" r="15" fill="#dcdcdc" />
-          </svg>
-        </button>
-        <p class="landerInfo">
-          Carburante: 1200<br />
-          Massa: 1100<br />
-          Spinta principale: 5.5<br />
-          Spinta laterale: 2.5<br />
-          Qualità: Grande autonomia<br />
-          Difetti: Poco reattivo
-        </p>
-      </div>
-      <div class="landerOption">
-        <button class="landerChoice" data-type="triangle" aria-label="Lander triangolare">
-          <svg width="40" height="40">
-            <polygon points="20,5 35,35 5,35" fill="#dcdcdc" />
-          </svg>
-        </button>
-        <p class="landerInfo">
-          Carburante: 800<br />
-          Massa: 900<br />
-          Spinta principale: 7<br />
-          Spinta laterale: 4<br />
-          Qualità: Molto agile<br />
-          Difetti: Carburante limitato
-        </p>
+    <div id="landerSelection" class="hidden" role="menu">
+      <p data-i18n="select_lander">Select your lander</p>
+      <div id="landerOptions">
+        <div class="landerOption">
+          <button class="landerChoice" data-type="classic" aria-label="Classic lander" data-i18n-aria-label="classic_aria">
+            <svg width="40" height="40">
+              <rect x="10" y="5" width="20" height="30" fill="#dcdcdc" />
+            </svg>
+          </button>
+          <p class="landerInfo" data-i18n="classic_info">
+            Fuel: 1000<br />
+            Mass: 1000<br />
+            Main thrust: 6<br />
+            Side thrust: 3<br />
+            Good: Balanced and reliable<br />
+            Bad: No standout strengths
+          </p>
+        </div>
+        <div class="landerOption">
+          <button class="landerChoice" data-type="round" aria-label="Round lander" data-i18n-aria-label="round_aria">
+            <svg width="40" height="40">
+              <circle cx="20" cy="20" r="15" fill="#dcdcdc" />
+            </svg>
+          </button>
+          <p class="landerInfo" data-i18n="round_info">
+            Fuel: 1200<br />
+            Mass: 1100<br />
+            Main thrust: 5.5<br />
+            Side thrust: 2.5<br />
+            Good: Long endurance<br />
+            Bad: Not very responsive
+          </p>
+        </div>
+        <div class="landerOption">
+          <button class="landerChoice" data-type="triangle" aria-label="Triangular lander" data-i18n-aria-label="triangle_aria">
+            <svg width="40" height="40">
+              <polygon points="20,5 35,35 5,35" fill="#dcdcdc" />
+            </svg>
+          </button>
+          <p class="landerInfo" data-i18n="triangle_info">
+            Fuel: 800<br />
+            Mass: 900<br />
+            Main thrust: 7<br />
+            Side thrust: 4<br />
+            Good: Very agile<br />
+            Bad: Limited fuel
+          </p>
+        </div>
       </div>
     </div>
-  </div>
 
   <!-- The gameContainer wraps the canvas, status, controls and instructions so it can be captured as a single image -->
   <div id="gameContainer" class="hidden" role="main">
@@ -88,14 +96,14 @@
       <p id="level">LVL 1</p>
     </div>
     <!-- Message displayed at end of game -->
-    <p id="message"></p>
+      <p id="message"></p>
   <!-- Buttons displayed after the game ends: restart and share.  They are wrapped in
        a container so they can be centrally positioned over the game area.  The
        container is hidden by default and shown when the game ends. -->
-  <div id="endButtons" class="hidden">
-    <button id="restartButton" class="hidden" aria-label="Restart level">Restart</button>
-    <button id="shareButton" class="hidden" aria-label="Share statistics">Share Stats</button>
-  </div>
+    <div id="endButtons" class="hidden">
+      <button id="restartButton" class="hidden" aria-label="Restart level" data-i18n="restart" data-i18n-aria-label="restart">Restart</button>
+      <button id="shareButton" class="hidden" aria-label="Share statistics" data-i18n="share" data-i18n-aria-label="share">Share Stats</button>
+    </div>
 
   <!-- Mobile controls: visible on touch devices -->
   <div id="mobileControls">
@@ -104,40 +112,39 @@
     <button id="btnRight" aria-label="Right thruster">→</button>
   </div>
   <!-- Instructions displayed below the game -->
-  <p id="instructions">
-    Use the arrow keys (↑ for the main engine, ← and → for the side thrusters)
-    or the on‑screen buttons above on mobile devices. Land softly on the
-    <span class="landing-pad">green landing pad</span>! Each time you land
-    successfully you advance to the next level, which increases gravity and reduces
-    your starting fuel.
-  </p>
+    <p id="instructions" data-i18n="instructions_paragraph">
+      Use the arrow keys (↑ for the main engine, ← and → for the side thrusters)
+      or the on‑screen buttons above on mobile devices. Land softly on the
+      <span class="landing-pad">green landing pad</span>! Each time you land
+      successfully you advance to the next level, which increases gravity and reduces
+      your starting fuel.
+    </p>
   </div> <!-- end of gameContainer -->
 
   <!-- Modals for instructions and credits -->
-  <div id="instructionsModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="instructionsTitle">
-    <div class="modal-content">
-      <h2 id="instructionsTitle">Istruzioni</h2>
-      <p>
-        Usa le frecce della tastiera per controllare il modulo: ↑ per accendere il motore principale, ← e → per i propulsori laterali.
-        Sui dispositivi mobili puoi usare i pulsanti sullo schermo. Atterra dolcemente sulla
-        <span class="landing-pad">piattaforma verde</span>! Ogni volta che atterri con successo
-        avanzi al livello successivo, che aumenta la gravità e riduce il carburante.
-      </p>
-      <button id="closeInstructions" aria-label="Close instructions">Chiudi</button>
+    <div id="instructionsModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="instructionsTitle">
+      <div class="modal-content">
+        <h2 id="instructionsTitle" data-i18n="instructions_modal_title">Instructions</h2>
+        <p data-i18n="instructions_modal_body">
+          Use the arrow keys to control the module: ↑ for the main engine, ← and → for the side thrusters.
+          On mobile devices you can use the on-screen buttons. Land softly on the
+          <span class="landing-pad">green landing pad</span>! Each time you land successfully
+          you advance to the next level, which increases gravity and reduces your starting fuel.
+        </p>
+        <button id="closeInstructions" aria-label="Close instructions" data-i18n="close_instructions" data-i18n-aria-label="close_instructions">Close</button>
+      </div>
     </div>
-  </div>
-  <div id="creditsModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="creditsTitle">
-    <div class="modal-content">
-      <h2 id="creditsTitle">Credits</h2>
-      <p>
-        Questo gioco è stato creato interamente da un modello di linguaggio di grandi dimensioni,
-        nello specifico <strong>ChatGPT</strong>, per conto dell'utente Andrea. Tutto il codice e i contenuti sono stati generati
-        dall'AI, con la supervisione dell'utente.
-      </p>
-      <button id="closeCredits" aria-label="Close credits">Chiudi</button>
+    <div id="creditsModal" class="modal hidden" role="dialog" aria-modal="true" aria-labelledby="creditsTitle">
+      <div class="modal-content">
+        <h2 id="creditsTitle" data-i18n="credits_modal_title">Credits</h2>
+        <p data-i18n="credits_modal_body">
+          This game was created entirely by a large language model, specifically <strong>ChatGPT</strong>, on behalf of the user Andrea. All code and content were generated by the AI, with the supervision of the user.
+        </p>
+        <button id="closeCredits" aria-label="Close credits" data-i18n="close_credits" data-i18n-aria-label="close_credits">Close</button>
+      </div>
     </div>
-  </div>
   <!-- Core lander physics and game controller -->
+  <script src="src/lang.js"></script>
   <script src="src/lander.js"></script>
   <script src="src/game.js"></script>
 </body>

@@ -79,4 +79,10 @@ class Lander {
   }
 }
 
-module.exports = { Lander, CONFIG };
+// Export for Node and attach to window for browser usage
+if (typeof module !== 'undefined' && module.exports) {
+  module.exports = { Lander, CONFIG };
+} else {
+  window.Lander = Lander;
+  window.LANDER_CONFIG = CONFIG;
+}

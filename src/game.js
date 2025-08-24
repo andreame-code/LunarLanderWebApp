@@ -113,11 +113,27 @@ class Game {
     this.dryMass = this.landerStats.dryMass;
     this.lander = new Lander(CONFIG.maxRange, this.landerType, this.dryMass);
 
+    this.serverToken = null;
+    this.loadServerConfig();
+
     // Bind restart button
     this.restartButton.addEventListener('click', () => this.restartGame());
 
     this.updateUI();
     this.draw();
+  }
+
+  async loadServerConfig() {
+    try {
+      const res = await fetch('/config');
+      const data = await res.json();
+      this.serverToken = data.token;
+      if (data.params && typeof data.params.gravity === 'number') {
+        this.currentGravity = data.params.gravity;
+      }
+    } catch (err) {
+      console.warn('Failed to load server config', err);
+    }
   }
 
   // Change the currently active lander type and create a new instance. This
@@ -336,6 +352,15 @@ class Game {
 
     this.lander.update(dt, this.currentGravity, this.mainThrust, this.sideThrust);
 
+    if (this.lander.anomaly) {
+      this.gameOver = true;
+      this.messageKey = 'anomaly_detected';
+      this.submitResult();
+      this.updateUI();
+      this.draw();
+      return;
+    }
+
     // Convert positions to pixels for terrain collision detection
     const { x: xPix, y: yPix } = this.toPixelCoords(
       this.lander.horizontalPosition,
@@ -370,6 +395,7 @@ class Game {
         this.restartButton.setAttribute('data-i18n', 'retry_level');
         this.crashed = true;
       }
+      this.submitResult();
       setLanguage(currentLang);
       // Reveal the restart and share buttons when the game ends and show the container
       this.restartButton.classList.remove('hidden');
@@ -386,6 +412,26 @@ class Game {
     // Redraw the game and update text on each tick
     this.draw();
     this.updateUI();
+  }
+
+  async submitResult() {
+    if (!this.serverToken) return;
+    const body = {
+      token: this.serverToken,
+      result: {
+        altitude: this.lander.altitude,
+        verticalVelocity: this.lander.verticalVelocity
+      }
+    };
+    try {
+      await fetch('/validate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body)
+      });
+    } catch (err) {
+      console.warn('Result validation failed', err);
+    }
   }
 
   // Reset the game state to initial conditions

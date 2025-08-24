@@ -84,6 +84,9 @@ class Game {
     this.safePadPixels = { start: 0, end: 0, y: 0 };
     this.segmentWidth = 0;
     this.numSegments = 0;
+    // Optional docking structure used for special levels (e.g., level 4)
+    this.structure = null;
+    this.structurePixels = null;
 
     // DOM element references
     this.altitudeElem = document.getElementById('altitude');
@@ -197,6 +200,34 @@ class Game {
       end: (this.safeZone.endRange / CONFIG.maxRange) * this.canvas.width,
       y: this.canvas.height - this.safeZone.height * this.canvas.height
     };
+
+    // Special terrain features for specific levels
+    if (this.level === 4) {
+      const structStart = CONFIG.maxRange * 0.8;
+      const structWidth = CONFIG.maxRange * 0.02;
+      const padStartAlt = CONFIG.maxAltitude * 0.4;
+      const padEndAlt = CONFIG.maxAltitude * 0.55;
+      const structHeight = padEndAlt + 10; // extend a bit above pad
+      this.structure = {
+        startRange: structStart,
+        endRange: structStart + structWidth,
+        padStart: padStartAlt,
+        padEnd: padEndAlt,
+        height: structHeight
+      };
+      const x = (structStart / CONFIG.maxRange) * this.canvas.width;
+      const width = (structWidth / CONFIG.maxRange) * this.canvas.width;
+      const top =
+        this.canvas.height - (structHeight / CONFIG.maxAltitude) * this.canvas.height;
+      const padYStart =
+        this.canvas.height - (padStartAlt / CONFIG.maxAltitude) * this.canvas.height;
+      const padYEnd =
+        this.canvas.height - (padEndAlt / CONFIG.maxAltitude) * this.canvas.height;
+      this.structurePixels = { x, width, top, padYStart, padYEnd };
+    } else {
+      this.structure = null;
+      this.structurePixels = null;
+    }
   }
 
   // Compute the terrain pixel Y coordinate at a given pixel X using linear interpolation
@@ -217,10 +248,19 @@ class Game {
     this.ctx.fillStyle = '#1e2530';
     this.ctx.fill(this.terrainPath);
     this.ctx.stroke(this.terrainPath);
-    // Highlight safe landing pad using cached pixel values
-    const { start, end, y } = this.safePadPixels;
-    this.ctx.fillStyle = '#2a9d8f';
-    this.ctx.fillRect(start, y - 2, end - start, 4);
+    if (!this.structure) {
+      // Highlight safe landing pad on the ground using cached pixel values
+      const { start, end, y } = this.safePadPixels;
+      this.ctx.fillStyle = '#2a9d8f';
+      this.ctx.fillRect(start, y - 2, end - start, 4);
+    } else {
+      // Draw vertical docking structure with side pad
+      const { x, width, top, padYStart, padYEnd } = this.structurePixels;
+      this.ctx.fillStyle = '#5a5a5a';
+      this.ctx.fillRect(x, top, width, this.canvas.height - top);
+      this.ctx.fillStyle = '#2a9d8f';
+      this.ctx.fillRect(x - 4, padYEnd, 4, padYStart - padYEnd);
+    }
   }
 
   // Convert physical coordinates to pixel positions
@@ -254,7 +294,6 @@ class Game {
       this.lander.horizontalPosition,
       this.lander.altitude
     );
-
     // Draw the lunar module body or a crumpled wreck if crashed
     this.ctx.fillStyle = '#dcdcdc';
     if (this.crashed) {
@@ -367,6 +406,49 @@ class Game {
       this.lander.altitude
     );
     const terrainY = this.getTerrainYPixel(xPix);
+    // Check collision with side docking structure before ground collision
+    if (this.structure) {
+      const { x, width, top, padYStart, padYEnd } = this.structurePixels;
+      const landerLeft = xPix - CONFIG.landerWidth / 2;
+      const landerRight = xPix + CONFIG.landerWidth / 2;
+      const landerTop = yPix - CONFIG.landerHeight;
+      const landerBottom = yPix;
+      if (landerRight >= x && landerLeft <= x + width && landerBottom > top) {
+        const impactVertical = this.lander.verticalVelocity;
+        const impactHorizontal = this.lander.horizontalVelocity;
+        this.lander.verticalVelocity = 0;
+        this.lander.horizontalVelocity = 0;
+        this.gameOver = true;
+        const withinPad = landerTop < padYStart && landerBottom > padYEnd;
+        const safeVertical = Math.abs(impactVertical) <= 2.0;
+        const safeHorizontal = Math.abs(impactHorizontal) <= 2.0;
+        let success = withinPad && safeVertical && safeHorizontal;
+        if (success) {
+          this.messageKey = 'success_message';
+          this.level += 1;
+          this.restartButton.setAttribute('data-i18n', 'next_level');
+          this.crashed = false;
+        } else {
+          this.messageKey = 'crash_message';
+          this.restartButton.setAttribute('data-i18n', 'retry_level');
+          this.crashed = true;
+        }
+        this.submitResult();
+        setLanguage(currentLang);
+        this.restartButton.classList.remove('hidden');
+        if (this.shareButton) {
+          this.shareButton.classList.remove('hidden');
+        }
+        if (this.endButtons) {
+          this.endButtons.classList.remove('hidden');
+        }
+        stopThrusterSound();
+        playLandingSound(success);
+        this.draw();
+        this.updateUI();
+        return;
+      }
+    }
     if (yPix >= terrainY) {
       // Capture impact velocities before stopping the lander
       const impactVertical = this.lander.verticalVelocity;

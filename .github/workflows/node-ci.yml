@@ -1,0 +1,23 @@
+name: Node CI
+on: [push, pull_request]
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+          registry-url: 'https://registry.npmjs.org'
+
+      # Uncomment this block only if we have private packages under @your-org
+      #- run: |
+      #    echo "@your-org:registry=https://npm.pkg.github.com" >> .npmrc
+      #    echo "//npm.pkg.github.com/:_authToken=${GITHUB_TOKEN}" >> .npmrc
+      #  env:
+      #    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      - run: scripts/verify-registry.sh
+
+      - run: npm ci

@@ -12,11 +12,15 @@ This repository contains a simple web version of the **Lunar Lander** game. It 
 
 ## Files
 
+The JavaScript source code is organized into the `src/` directory.
+
 | File | Description |
 | --- | --- |
 | **`index.html`** | Main HTML page that defines the UI structure. |
 | **`style.css`** | Basic styling for the page, buttons and text. |
-| **`script.js`** | Contains all game logic, physics updates and event handlers. |
+| **`src/lander.js`** | Handles lander physics and movement. |
+| **`src/game.js`** | Runs the game loop and orchestrates events. |
+| **`src/lang.js`** | Manages language strings and localization helpers. |
 
 ## Running locally
 

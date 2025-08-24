@@ -27,3 +27,8 @@ test('position updates according to velocity', () => {
   assert.ok(Math.abs(lander.altitude - (CONFIG.maxAltitude - 10)) < 1e-6);
   assert.ok(Math.abs(lander.horizontalPosition - (50 + 5)) < 1e-6);
 });
+
+test('constructor stores lander type', () => {
+  const lander = new Lander(100, 'triangle');
+  assert.strictEqual(lander.type, 'triangle');
+});

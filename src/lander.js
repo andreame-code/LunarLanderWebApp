@@ -3,8 +3,11 @@ const CONFIG = {
 };
 
 class Lander {
-  constructor(maxRange) {
+  constructor(maxRange, type = 'classic') {
     this.maxRange = maxRange;
+    // Store the visual/physical variant of the lander.  For now the type only
+    // affects rendering but in the future it will influence physics as well.
+    this.type = type;
     this.reset(0);
   }
 

@@ -79,6 +79,11 @@ class Game {
     // Terrain definition
     this.terrainPoints = [];
     this.safeZone = { startRange: 0, endRange: 0, height: 0 };
+    // Cached geometry for terrain drawing
+    this.terrainPath = null;
+    this.safePadPixels = { start: 0, end: 0, y: 0 };
+    this.segmentWidth = 0;
+    this.numSegments = 0;
 
     // DOM element references
     this.altitudeElem = document.getElementById('altitude');
@@ -157,15 +162,32 @@ class Game {
       endRange: (safeIndex + 1) * segmentRange,
       height: flatHeight
     };
+
+    // Cache geometry used during rendering
+    this.numSegments = this.terrainPoints.length - 1;
+    this.segmentWidth = this.canvas.width / this.numSegments;
+    this.terrainPath = new Path2D();
+    this.terrainPath.moveTo(0, this.canvas.height);
+    for (let i = 0; i < this.terrainPoints.length; i++) {
+      const x = i * this.segmentWidth;
+      const y = this.canvas.height - this.terrainPoints[i] * this.canvas.height;
+      this.terrainPath.lineTo(x, y);
+    }
+    this.terrainPath.lineTo(this.canvas.width, this.canvas.height);
+    this.terrainPath.closePath();
+
+    this.safePadPixels = {
+      start: (this.safeZone.startRange / CONFIG.maxRange) * this.canvas.width,
+      end: (this.safeZone.endRange / CONFIG.maxRange) * this.canvas.width,
+      y: this.canvas.height - this.safeZone.height * this.canvas.height
+    };
   }
 
   // Compute the terrain pixel Y coordinate at a given pixel X using linear interpolation
   getTerrainYPixel(xPix) {
     if (this.terrainPoints.length === 0) return this.canvas.height;
-    const numSegments = this.terrainPoints.length - 1;
-    const segmentWidth = this.canvas.width / numSegments;
-    const i = Math.min(Math.floor(xPix / segmentWidth), numSegments - 1); // clamp index
-    const t = (xPix - i * segmentWidth) / segmentWidth;
+    const i = Math.min(Math.floor(xPix / this.segmentWidth), this.numSegments - 1); // clamp index
+    const t = (xPix - i * this.segmentWidth) / this.segmentWidth;
     const h0 = this.terrainPoints[i];
     const h1 = this.terrainPoints[i + 1];
     const heightNorm = h0 * (1 - t) + h1 * t;
@@ -174,28 +196,15 @@ class Game {
 
   // Draw the lunar surface on the canvas, highlighting the safe landing pad.
   drawTerrain() {
-    if (this.terrainPoints.length === 0) return;
+    if (!this.terrainPath) return;
     this.ctx.strokeStyle = '#7b8794';
     this.ctx.fillStyle = '#1e2530';
-    this.ctx.beginPath();
-    const numSegments = this.terrainPoints.length - 1;
-    const segmentWidth = this.canvas.width / numSegments;
-    this.ctx.moveTo(0, this.canvas.height);
-    for (let i = 0; i < this.terrainPoints.length; i++) {
-      const x = i * segmentWidth;
-      const y = this.canvas.height - this.terrainPoints[i] * this.canvas.height;
-      this.ctx.lineTo(x, y);
-    }
-    this.ctx.lineTo(this.canvas.width, this.canvas.height);
-    this.ctx.closePath();
-    this.ctx.fill();
-    this.ctx.stroke();
-    // Highlight safe landing pad
-      const padStartPix = (this.safeZone.startRange / CONFIG.maxRange) * this.canvas.width;
-      const padEndPix = (this.safeZone.endRange / CONFIG.maxRange) * this.canvas.width;
-    const padYPix = this.canvas.height - this.safeZone.height * this.canvas.height;
+    this.ctx.fill(this.terrainPath);
+    this.ctx.stroke(this.terrainPath);
+    // Highlight safe landing pad using cached pixel values
+    const { start, end, y } = this.safePadPixels;
     this.ctx.fillStyle = '#2a9d8f';
-    this.ctx.fillRect(padStartPix, padYPix - 2, padEndPix - padStartPix, 4);
+    this.ctx.fillRect(start, y - 2, end - start, 4);
   }
 
   // Convert physical coordinates to pixel positions

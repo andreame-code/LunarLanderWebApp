@@ -1,6 +1,6 @@
 const test = require('node:test');
 const assert = require('node:assert/strict');
-const { Lander, CONFIG } = require('../lander');
+const { Lander, CONFIG } = require('../src/lander');
 
 test('fuel decreases when thrusters fire', () => {
   const lander = new Lander(100);

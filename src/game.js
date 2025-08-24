@@ -19,6 +19,15 @@ const CONFIG = {
   gravityIncrement: 0.3
 };
 
+// Stats and traits for the available landers. These values influence gameplay
+// and are also shown in the selection menu to highlight strengths and
+// weaknesses.
+const LANDER_TYPES = {
+  classic: { baseFuel: 1000, mainThrust: 6.0, sideThrust: 3.0 },
+  round: { baseFuel: 1200, mainThrust: 5.5, sideThrust: 2.5 },
+  triangle: { baseFuel: 800, mainThrust: 7.0, sideThrust: 4.0 }
+};
+
 // Simple audio helpers
 const audioContext = new (window.AudioContext || window.webkitAudioContext)();
 let thrusterOscillator = null;
@@ -92,6 +101,10 @@ class Game {
     // Lander instance. The specific lander type can be chosen from the menu
     // before the game starts. Default to the classic rectangular lander.
     this.landerType = 'classic';
+    this.landerStats = LANDER_TYPES[this.landerType];
+    this.mainThrust = this.landerStats.mainThrust;
+    this.sideThrust = this.landerStats.sideThrust;
+    this.baseFuel = this.landerStats.baseFuel;
     this.lander = new Lander(CONFIG.maxRange, this.landerType);
 
     // Bind restart button
@@ -106,6 +119,10 @@ class Game {
   // the game.
   setLanderType(type) {
     this.landerType = type;
+    this.landerStats = LANDER_TYPES[type];
+    this.mainThrust = this.landerStats.mainThrust;
+    this.sideThrust = this.landerStats.sideThrust;
+    this.baseFuel = this.landerStats.baseFuel;
     this.lander = new Lander(CONFIG.maxRange, type);
   }
 
@@ -296,7 +313,7 @@ class Game {
     // Only update physics if the game is in progress and not over
     if (!this.gameStarted || this.gameOver) return;
 
-    this.lander.update(dt, this.currentGravity, CONFIG.mainThrust, CONFIG.sideThrust);
+    this.lander.update(dt, this.currentGravity, this.mainThrust, this.sideThrust);
 
     // Convert positions to pixels for terrain collision detection
       const xPix = (this.lander.horizontalPosition / CONFIG.maxRange) * this.canvas.width;
@@ -350,7 +367,7 @@ class Game {
   // Reset the game state to initial conditions
   restartGame() {
     // Reset the module's state to starting conditions for the current level.
-    const startFuel = Math.max(CONFIG.baseFuel - CONFIG.fuelDecrease * (this.level - 1), 100);
+    const startFuel = Math.max(this.baseFuel - CONFIG.fuelDecrease * (this.level - 1), 100);
     this.lander.reset(startFuel);
     // Increase gravity as the level increases
     this.currentGravity = CONFIG.gravity + CONFIG.gravityIncrement * (this.level - 1);

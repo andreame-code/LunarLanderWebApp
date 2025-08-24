@@ -10,7 +10,7 @@ const CONFIG = {
   gravity: 1.62,           // Lunar gravity (m/s^2)
   mainThrust: 6.0,         // Upward acceleration from main engine (m/s^2)
   sideThrust: 3.0,         // Lateral acceleration from side thrusters (m/s^2)
-  maxAltitude: 100.0,      // Maximum altitude used for scaling (m)
+  maxAltitude: LANDER_CONFIG.maxAltitude, // Maximum altitude used for scaling (m)
   maxRange: 100.0,         // Horizontal range corresponding to canvas width (m)
   landerWidth: 20,         // Lander width in pixels
   landerHeight: 30,        // Lander height in pixels
@@ -49,94 +49,6 @@ function playLandingSound(success) {
   osc.connect(gain).connect(audioContext.destination);
   osc.start();
   osc.stop(audioContext.currentTime + 0.2);
-}
-
-/**
- * Lander encapsulates the state and physics of the lunar module.  It
- * tracks position, velocity, fuel and thruster flags and exposes methods
- * to control thrusters and advance the simulation.
- */
-class Lander {
-  constructor(maxRange) {
-    this.maxRange = maxRange;
-    this.reset(0);
-  }
-
-  // Reset the lander to its initial position with a given starting fuel
-  reset(startFuel) {
-    this.altitude = CONFIG.maxAltitude;
-    this.verticalVelocity = 0.0;
-    this.horizontalPosition = this.maxRange / 2;
-    this.horizontalVelocity = 0.0;
-    this.fuel = startFuel;
-    this.upThruster = false;
-    this.leftThruster = false;
-    this.rightThruster = false;
-  }
-
-  startUp() {
-    if (this.fuel > 0) this.upThruster = true;
-  }
-  stopUp() {
-    this.upThruster = false;
-  }
-  startLeft() {
-    if (this.fuel > 0) this.leftThruster = true;
-  }
-  stopLeft() {
-    this.leftThruster = false;
-  }
-  startRight() {
-    if (this.fuel > 0) this.rightThruster = true;
-  }
-  stopRight() {
-    this.rightThruster = false;
-  }
-
-  // Advance the physics simulation by dt seconds
-  update(dt, gravity, mainThrust, sideThrust) {
-    let accelY = gravity;
-    let accelX = 0;
-    let thrusters = 0;
-
-    if (this.upThruster && this.fuel > 0) {
-      accelY -= mainThrust;
-      thrusters++;
-    }
-    if (this.leftThruster && this.fuel > 0) {
-      accelX -= sideThrust;
-      thrusters++;
-    }
-    if (this.rightThruster && this.fuel > 0) {
-      accelX += sideThrust;
-      thrusters++;
-    }
-
-    // Consume one unit of fuel per active thruster
-    if (thrusters > 0 && this.fuel > 0) {
-      this.fuel = Math.max(this.fuel - thrusters, 0);
-      if (this.fuel <= 0) {
-        this.upThruster = this.leftThruster = this.rightThruster = false;
-      }
-    }
-
-    // Update velocities
-    this.verticalVelocity += accelY * dt;
-    this.horizontalVelocity += accelX * dt;
-
-    // Update positions
-    this.altitude -= this.verticalVelocity * dt; // altitude decreases when verticalVelocity is positive (downward)
-    this.horizontalPosition += this.horizontalVelocity * dt;
-
-    // Keep the module within horizontal boundaries
-    if (this.horizontalPosition < 0) {
-      this.horizontalPosition = 0;
-      this.horizontalVelocity = 0;
-    } else if (this.horizontalPosition > this.maxRange) {
-      this.horizontalPosition = this.maxRange;
-      this.horizontalVelocity = 0;
-    }
-  }
 }
 
 /**

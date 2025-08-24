@@ -61,3 +61,8 @@ test('thrust is more effective with lower mass', () => {
   const lightVel = light.verticalVelocity;
   assert.ok(Math.abs(lightVel) > Math.abs(heavyVel));
 });
+
+test('lander accepts custom dry mass', () => {
+  const lander = new Lander(100, 'classic', 1500);
+  assert.strictEqual(lander.mass, 1500);
+});

@@ -7,18 +7,19 @@ const LANDER_CONFIG = {
 
 // Approximate dry mass of the lander (arbitrary units). The total mass
 // is this dry mass plus remaining fuel. As fuel burns, the mass decreases
-// which makes the thrusters more effective.
-const DRY_MASS = 1000;
+// which makes the thrusters more effective. Individual lander models can
+// override this default value.
+const DEFAULT_DRY_MASS = 1000;
 
 class Lander {
-  constructor(maxRange, type = 'classic') {
+  constructor(maxRange, type = 'classic', dryMass = DEFAULT_DRY_MASS) {
     this.maxRange = maxRange;
     // Store the visual/physical variant of the lander.  For now the type only
     // affects rendering but in the future it will influence physics as well.
     this.type = type;
     // Mass properties. `fullMass` will hold the mass when fuel is full so we
     // can scale thrust effectiveness based on current mass.
-    this.dryMass = DRY_MASS;
+    this.dryMass = dryMass;
     this.fullMass = this.dryMass;
     this.mass = this.dryMass;
     this.reset(0);

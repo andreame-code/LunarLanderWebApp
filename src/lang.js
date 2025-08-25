@@ -103,6 +103,33 @@ var translations = {
     next_level: "Nast\u0119pny poziom",
     retry_level: "Powt\u00f3rz poziom"
   }
+  ,
+  zh: {
+    language: "语言",
+    play: "开始",
+    instructions: "说明",
+    credits: "鸣谢",
+    select_lander: "选择你的着陆器",
+    classic_info: "燃料: 1000<br />质量: 1000<br />主推力: 6<br />侧推力: 3<br />优点: 平衡且可靠<br />缺点: 无明显优势",
+    round_info: "燃料: 1200<br />质量: 1100<br />主推力: 5.5<br />侧推力: 2.5<br />优点: 持久耐用<br />缺点: 响应较慢",
+    triangle_info: "燃料: 800<br />质量: 900<br />主推力: 7<br />侧推力: 4<br />优点: 非常灵活<br />缺点: 燃料有限",
+    restart: "重新开始",
+    share: "分享统计",
+    instructions_paragraph: "使用方向键（↑ 表示主引擎，← 和 → 表示侧推进器）或移动设备上的屏幕按钮。轻轻降落在<span class=\\"landing-pad\\">绿色着陆平台</span>上！每次成功着陆都会进入下一关，重力增加且初始燃料减少。",
+    instructions_modal_title: "说明",
+    instructions_modal_body: "使用方向键控制模块：↑ 为主引擎，← 和 → 为侧推进器。移动设备上可使用屏幕按钮。轻轻降落在<span class=\\"landing-pad\\">绿色着陆平台</span>上！每次成功着陆都会进入下一关，重力增加且初始燃料减少。",
+    close_instructions: "关闭",
+    credits_modal_title: "鸣谢",
+    credits_modal_body: "本游戏完全由大型语言模型，具体为<strong>ChatGPT</strong>，代表用户 Andrea 创作。所有代码和内容均由 AI 生成，并由用户监督。",
+    close_credits: "关闭",
+    classic_aria: "经典着陆器",
+    round_aria: "圆形着陆器",
+    triangle_aria: "三角形着陆器",
+    success_message: "成功着陆！",
+    crash_message: "坠毁！",
+    next_level: "下一关",
+    retry_level: "重试关卡"
+  }
 };
 
 var currentLang = 'en';

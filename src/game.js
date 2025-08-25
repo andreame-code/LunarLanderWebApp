@@ -252,7 +252,12 @@ class Game {
       // Highlight safe landing pad on the ground using cached pixel values
       const { start, end, y } = this.safePadPixels;
       this.ctx.fillStyle = '#2a9d8f';
+      // Draw a thicker, stroked rectangle so the pad stands out clearly even on
+      // high-DPI displays where a single fill might be hard to see.
       this.ctx.fillRect(start, y - 2, end - start, 4);
+      this.ctx.strokeStyle = '#2a9d8f';
+      this.ctx.lineWidth = 2;
+      this.ctx.strokeRect(start, y - 2, end - start, 4);
     } else {
       // Draw vertical docking structure with side pad
       const { x, width, top, padYStart, padYEnd } = this.structurePixels;

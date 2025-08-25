@@ -76,6 +76,32 @@ var translations = {
     crash_message: "Absturz!",
     next_level: "N\u00e4chstes Level",
     retry_level: "Level wiederholen"
+  },
+  pl: {
+    language: "J\u0119zyk",
+    play: "Graj",
+    instructions: "Instrukcje",
+    credits: "Autorzy",
+    select_lander: "Wybierz sw\u00f3j l\u0105downik",
+    classic_info: "Paliwo: 1000<br />Masa: 1000<br />G\u0142\u00f3wna si\u0142a ci\u0105gu: 6<br />Boczna si\u0142a ci\u0105gu: 3<br />Zalety: Zr\u00f3wnowa\u017cony i niezawodny<br />Wady: Brak wyra\u017anych atut\u00f3w",
+    round_info: "Paliwo: 1200<br />Masa: 1100<br />G\u0142\u00f3wna si\u0142a ci\u0105gu: 5.5<br />Boczna si\u0142a ci\u0105gu: 2.5<br />Zalety: D\u0142ugi zasi\u0119g<br />Wady: Ma\u0142o responsywny",
+    triangle_info: "Paliwo: 800<br />Masa: 900<br />G\u0142\u00f3wna si\u0142a ci\u0105gu: 7<br />Boczna si\u0142a ci\u0105gu: 4<br />Zalety: Bardzo zwrotny<br />Wady: Ograniczone paliwo",
+    restart: "Restartuj",
+    share: "Udost\u0119pnij statystyki",
+    instructions_paragraph: "U\u017cyj klawiszy strza\u0142ek (\u2191 dla g\u0142\u00f3wnego silnika, \u2190 i \u2192 dla bocznych silnik\u00f3w) lub przycisk\u00f3w na ekranie na urz\u0105dzeniach mobilnych. Wyl\u0105duj delikatnie na <span class=\\\"landing-pad\\\">zielonej platformie l\u0105dowania</span>! Za ka\u017cdym udanym l\u0105dowaniem przechodzisz do nast\u0119pnego poziomu, co zwi\u0119ksza grawitacj\u0119 i zmniejsza pocz\u0105tkowe paliwo.",
+    instructions_modal_title: "Instrukcje",
+    instructions_modal_body: "U\u017cyj klawiszy strza\u0142ek, aby sterowa\u0107 modu\u0142em: \u2191 dla g\u0142\u00f3wnego silnika, \u2190 i \u2192 dla bocznych silnik\u00f3w. Na urz\u0105dzeniach mobilnych mo\u017cesz u\u017cy\u0107 przycisk\u00f3w na ekranie. Wyl\u0105duj delikatnie na <span class=\\\"landing-pad\\\">zielonej platformie l\u0105dowania</span>! Za ka\u017cdym udanym l\u0105dowaniem przechodzisz do nast\u0119pnego poziomu, co zwi\u0119ksza grawitacj\u0119 i zmniejsza pocz\u0105tkowe paliwo.",
+    close_instructions: "Zamknij",
+    credits_modal_title: "Autorzy",
+    credits_modal_body: "Ta gra zosta\u0142a stworzona w ca\u0142o\u015bci przez du\u017cy model j\u0119zykowy, konkretnie <strong>ChatGPT</strong>, na zlecenie u\u017cytkownika Andrea. Ca\u0142y kod i zawarto\u015b\u0107 zosta\u0142y wygenerowane przez AI pod nadzorem u\u017cytkownika.",
+    close_credits: "Zamknij",
+    classic_aria: "Klasyczny l\u0105downik",
+    round_aria: "Okr\u0105g\u0142y l\u0105downik",
+    triangle_aria: "Tr\u00f3jk\u0105tny l\u0105downik",
+    success_message: "Udane l\u0105dowanie!",
+    crash_message: "Katastrofa!",
+    next_level: "Nast\u0119pny poziom",
+    retry_level: "Powt\u00f3rz poziom"
   }
 };
 

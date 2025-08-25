@@ -34,3 +34,8 @@ This version is designed to mirror the behaviour of the watchOS game by focusing
 
 All code and content in this project were created entirely using a large language model (LLM), specifically **ChatGPT**. No part of the project was written manually by a person. The entire development was generated and guided by ChatGPT.
 
+
+## 📚 Wiki
+
+Extended documentation lives in the [wiki](wiki/Home.md). It covers gameplay, physics, and development setup.
+

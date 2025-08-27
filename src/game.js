@@ -202,18 +202,22 @@ class Game {
     };
 
     // Special terrain features for specific levels
-    if (this.level === 4) {
-      const structStart = CONFIG.maxRange * 0.8;
+    if (this.level === 4 || this.level === 5) {
       const structWidth = CONFIG.maxRange * 0.02;
+      // Place the structure near the right edge on level 4 and mirror to the left on level 5
+      const structStart =
+        this.level === 4 ? CONFIG.maxRange * 0.8 : CONFIG.maxRange * 0.18;
       const padStartAlt = CONFIG.maxAltitude * 0.4;
       const padEndAlt = CONFIG.maxAltitude * 0.55;
       const structHeight = padEndAlt + 10; // extend a bit above pad
+      const padSide = this.level === 4 ? 'left' : 'right';
       this.structure = {
         startRange: structStart,
         endRange: structStart + structWidth,
         padStart: padStartAlt,
         padEnd: padEndAlt,
-        height: structHeight
+        height: structHeight,
+        padSide
       };
       const x = (structStart / CONFIG.maxRange) * this.canvas.width;
       const width = (structWidth / CONFIG.maxRange) * this.canvas.width;
@@ -264,7 +268,8 @@ class Game {
       this.ctx.fillStyle = '#5a5a5a';
       this.ctx.fillRect(x, top, width, this.canvas.height - top);
       this.ctx.fillStyle = '#2a9d8f';
-      this.ctx.fillRect(x - 4, padYEnd, 4, padYStart - padYEnd);
+      const padOffset = this.structure.padSide === 'left' ? -4 : width;
+      this.ctx.fillRect(x + padOffset, padYEnd, 4, padYStart - padYEnd);
     }
   }
 
@@ -414,6 +419,7 @@ class Game {
     // Check collision with side docking structure before ground collision
     if (this.structure) {
       const { x, width, top, padYStart, padYEnd } = this.structurePixels;
+      const { startRange, endRange, padSide } = this.structure;
       const landerLeft = xPix - CONFIG.landerWidth / 2;
       const landerRight = xPix + CONFIG.landerWidth / 2;
       const landerTop = yPix - CONFIG.landerHeight;
@@ -427,7 +433,12 @@ class Game {
         const withinPad = landerTop < padYStart && landerBottom > padYEnd;
         const safeVertical = Math.abs(impactVertical) <= 2.0;
         const safeHorizontal = Math.abs(impactHorizontal) <= 2.0;
-        let success = withinPad && safeVertical && safeHorizontal;
+        const fromCorrectSide =
+          padSide === 'left'
+            ? this.lander.horizontalPosition < startRange
+            : this.lander.horizontalPosition > endRange;
+        let success =
+          withinPad && safeVertical && safeHorizontal && fromCorrectSide;
         if (success) {
           this.messageKey = 'success_message';
           this.level += 1;

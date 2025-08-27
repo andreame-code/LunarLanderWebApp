@@ -160,14 +160,26 @@ class Game {
    * in physical range units (0–maxRange).
    */
   generateTerrain() {
-    const numPoints = 10;
+    // Increase the number of points for higher levels to create more varied
+    // terrain. Past level 6 we gradually add more segments making the path to
+    // the pad increasingly complex.
+    const numPoints = this.level >= 6 ? 12 + Math.min(this.level - 6, 8) : 10;
     this.terrainPoints = [];
     for (let i = 0; i <= numPoints; i++) {
       // random heights between 10% and 40% of the canvas height
       this.terrainPoints.push(Math.random() * 0.3 + 0.1);
     }
-    // choose a random flat zone of width one segment somewhere in the middle
-    const safeIndex = Math.floor(Math.random() * (numPoints - 2)) + 1;
+
+    // Choose a flat zone for the safe landing pad. In early levels this is
+    // somewhere in the middle, but from level 6 onward we move the pad toward
+    // the edges, forcing longer horizontal travel.
+    let safeIndex;
+    if (this.level >= 6) {
+      // Alternate pad side to keep variety
+      safeIndex = this.level % 2 === 0 ? 1 : numPoints - 2;
+    } else {
+      safeIndex = Math.floor(Math.random() * (numPoints - 2)) + 1;
+    }
     const segmentRange = CONFIG.maxRange / numPoints;
     const flatHeight = Math.min(
       this.terrainPoints[safeIndex],
@@ -181,6 +193,19 @@ class Game {
       endRange: (safeIndex + 1) * segmentRange,
       height: flatHeight
     };
+
+    // For advanced levels, add tall obstacles to create a challenging route to
+    // the landing pad.
+    if (this.level >= 6) {
+      const difficulty = Math.min(this.level - 5, 5); // 1..5
+      for (let i = 1; i < numPoints; i++) {
+        if (i === safeIndex || i === safeIndex + 1) continue;
+        // Increase chance of a tall peak as difficulty rises
+        if (Math.random() < 0.3 + 0.1 * difficulty) {
+          this.terrainPoints[i] = Math.random() * 0.3 + 0.4; // 40-70% height
+        }
+      }
+    }
 
     // Cache geometry used during rendering
     this.numSegments = this.terrainPoints.length - 1;
@@ -537,8 +562,10 @@ class Game {
     // Reset the module's state to starting conditions for the current level.
     const startFuel = Math.max(this.baseFuel - CONFIG.fuelDecrease * (this.level - 1), 100);
     this.lander.reset(startFuel);
-    // Increase gravity as the level increases
-    this.currentGravity = CONFIG.gravity + CONFIG.gravityIncrement * (this.level - 1);
+    // Increase gravity only for early levels. After level 6 the gravitational
+    // pull stays roughly the same while difficulty comes from terrain layout.
+    const gravityLevels = Math.min(this.level - 1, 5);
+    this.currentGravity = CONFIG.gravity + CONFIG.gravityIncrement * gravityLevels;
     // Clear thruster flags and reset state
     this.gameOver = false;
     this.messageKey = null;

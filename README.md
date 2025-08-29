@@ -22,6 +22,10 @@ The JavaScript source code is organized into the `src/` directory.
 | **`src/game.js`** | Runs the game loop and orchestrates events. |
 | **`src/lang.js`** | Manages language strings and localization helpers. |
 
+## Localization
+
+The interface is available in English, Italian, German, Polish, Chinese, Persian, Spanish, French, Portuguese, Russian, Arabic, Japanese and Hindi.
+
 ## Running locally
 
 Open `index.html` in any modern browser (Chrome, Firefox, Safari, Edge) to play. For additional security the repository now includes a small Node.js server. Run `npm start` to launch the server and load the game from `http://localhost:3000` so that gameplay parameters are signed and basic result validation occurs.

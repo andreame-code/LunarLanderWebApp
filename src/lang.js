@@ -157,7 +157,18 @@ var translations = {
   }
 };
 
-var currentLang = 'en';
+var currentLang = (function() {
+  var userLang = (navigator.languages && navigator.languages[0]) ||
+                 navigator.language ||
+                 navigator.userLanguage;
+  if (userLang) {
+    userLang = userLang.toLowerCase().split('-')[0];
+    if (translations[userLang]) {
+      return userLang;
+    }
+  }
+  return 'en';
+})();
 
 function setLanguage(lang) {
   currentLang = lang;
@@ -179,6 +190,9 @@ function setLanguage(lang) {
       el.setAttribute('aria-label', translation);
     }
   });
+  if (languageSelect) {
+    languageSelect.value = lang;
+  }
   if (window.game && typeof window.game.updateUI === 'function') {
     window.game.updateUI();
   }

@@ -102,8 +102,7 @@ var translations = {
     crash_message: "Katastrofa!",
     next_level: "Nast\u0119pny poziom",
     retry_level: "Powt\u00f3rz poziom"
-  }
-  ,
+  },
   zh: {
     language: "语言",
     play: "开始",
@@ -129,6 +128,32 @@ var translations = {
     crash_message: "坠毁！",
     next_level: "下一关",
     retry_level: "重试关卡"
+  },
+  fa: {
+    language: "زبان",
+    play: "بازی",
+    instructions: "دستورالعمل‌ها",
+    credits: "سازندگان",
+    select_lander: "فرودگر خود را انتخاب کنید",
+    classic_info: "سوخت: ۱۰۰۰<br />جرم: ۱۰۰۰<br />پیشرانه اصلی: ۶<br />پیشرانه جانبی: ۳<br />خوب: متعادل و قابل اعتماد<br />بد: بدون نقطه قوت برجسته",
+    round_info: "سوخت: ۱۲۰۰<br />جرم: ۱۱۰۰<br />پیشرانه اصلی: ۵٫۵<br />پیشرانه جانبی: ۲٫۵<br />خوب: ماندگاری زیاد<br />بد: واکنش‌پذیری کم",
+    triangle_info: "سوخت: ۸۰۰<br />جرم: ۹۰۰<br />پیشرانه اصلی: ۷<br />پیشرانه جانبی: ۴<br />خوب: بسیار چابک<br />بد: سوخت محدود",
+    restart: "شروع دوباره",
+    share: "اشتراک‌گذاری آمار",
+    instructions_paragraph: "از کلیدهای جهت‌نما استفاده کنید (↑ برای موتور اصلی، ← و → برای پیشرانه‌های جانبی) یا دکمه‌های روی صفحه در دستگاه‌های همراه. به‌آرامی روی <span class=\"landing-pad\">سکوی سبز فرود</span> بیایید! با هر فرود موفق به مرحله بعدی می‌روید. در مراحل اولیه گرانش افزایش می‌یابد و سوخت اولیه کاهش می‌یابد، در مراحل بعدی گرانش ثابت می‌ماند ولی زمین ناهموارتر می‌شود.",
+    instructions_modal_title: "دستورالعمل‌ها",
+    instructions_modal_body: "برای کنترل ماژول از کلیدهای جهت‌نما استفاده کنید: ↑ برای موتور اصلی، ← و → برای پیشرانه‌های جانبی. در دستگاه‌های همراه می‌توانید از دکمه‌های روی صفحه استفاده کنید. به‌آرامی روی <span class=\"landing-pad\">سکوی سبز فرود</span> بیایید! با هر فرود موفق به مرحله بعدی می‌روید. در مراحل اولیه گرانش افزایش می‌یابد و سوخت اولیه کاهش می‌یابد، در مراحل بعدی گرانش ثابت می‌ماند ولی زمین ناهموارتر می‌شود.",
+    close_instructions: "بستن",
+    credits_modal_title: "سازندگان",
+    credits_modal_body: "این بازی به طور کامل توسط یک مدل زبانی بزرگ، یعنی <strong>ChatGPT</strong>، به نمایندگی از کاربر آندریا ساخته شده است. تمام کد و محتوا توسط هوش مصنوعی و با نظارت کاربر تولید شده‌اند.",
+    close_credits: "بستن",
+    classic_aria: "فرودگر کلاسیک",
+    round_aria: "فرودگر گرد",
+    triangle_aria: "فرودگر مثلثی",
+    success_message: "فرود موفق!",
+    crash_message: "سقوط!",
+    next_level: "مرحله بعد",
+    retry_level: "تلاش دوباره"
   }
 };
 
@@ -137,6 +162,7 @@ var currentLang = 'en';
 function setLanguage(lang) {
   currentLang = lang;
   document.documentElement.lang = lang;
+  document.documentElement.dir = (lang === 'fa') ? 'rtl' : 'ltr';
   var elements = document.querySelectorAll('[data-i18n]');
   elements.forEach(function(el) {
     var key = el.getAttribute('data-i18n');
